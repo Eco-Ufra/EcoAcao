@@ -5,77 +5,186 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cadastro – EcoAção Acadêmica</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
 <style>
-body{
-  margin:0;
-  font-family:Arial, Helvetica, sans-serif;
-  background:#f4f8f6;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
+/* Reset básico e Configuração da Fonte */
+* {
+  box-sizing: border-box;
 }
-.box{
-  background:#fff;
-  padding:32px;
-  border-radius:16px;
-  width:100%;
-  max-width:400px;
-  box-shadow:0 10px 25px rgba(0,0,0,.1);
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif; /* Fonte mais moderna */
+  /* Um fundo degradê verde para dar vida */
+  background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: #333;
 }
-h1{
-  text-align:center;
-  color:#2e7d32;
+
+.box {
+  background: #fff;
+  padding: 40px;
+  border-radius: 24px; /* Bordas bem arredondadas */
+  width: 90%;
+  max-width: 400px;
+  /* Sombra suave para destacar o box do fundo */
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  transition: transform 0.3s ease;
 }
-input{
-  width:100%;
-  padding:12px;
-  margin:10px 0;
-  border-radius:10px;
-  border:1px solid #ccc;
+
+/* Título */
+h1 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #2e7d32;
+  font-weight: 600;
+  font-size: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
-button{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border:none;
-  border-radius:12px;
-  background:#2e7d32;
-  color:#fff;
-  font-size:16px;
-  cursor:pointer;
+
+.subtitle {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 25px;
+  font-weight: 300;
 }
-small{
-  display:block;
-  text-align:center;
-  margin-top:14px;
+
+/* Estilização dos Inputs */
+.input-group {
+  margin-bottom: 15px;
+  text-align: left;
 }
-a{
-  color:#2e7d32;
-  font-weight:bold;
-  text-decoration:none;
+
+label {
+  font-size: 12px;
+  color: #2e7d32;
+  font-weight: 600;
+  margin-left: 5px;
+  margin-bottom: 4px;
+  display: block;
 }
+
+input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 2px solid #eef2f0; /* Borda sutil */
+  background: #f9fbf9;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+/* Efeito ao clicar no input */
+input:focus {
+  border-color: #2e7d32;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1);
+}
+
+input::placeholder {
+  color: #aaa;
+}
+
+/* Botão */
+button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(to right, #2e7d32, #43a047);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+}
+
+button:hover {
+  transform: translateY(-2px); /* O botão "sobe" levemente */
+  box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* Rodapé do card */
+small {
+  display: block;
+  text-align: center;
+  margin-top: 20px;
+  color: #666;
+  font-size: 13px;
+}
+
+a {
+  color: #2e7d32;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #1b5e20;
+  text-decoration: underline;
+}
+
+/* Animaçãozinha na planta */
+.plant-icon {
+  animation: balanco 2s infinite ease-in-out;
+  display: inline-block;
+}
+
+@keyframes balanco {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(10deg); }
+}
+
 </style>
 </head>
 
 <body>
 
 <div class="box">
-  <h1>🌱 Cadastro</h1>
+  <h1><span class="plant-icon">🌱</span> Cadastro</h1>
+  <p class="subtitle">Junte-se à EcoAção Acadêmica</p>
 
-  <input type="text" id="nome" placeholder="Nome completo">
-  <input type="email" id="email" placeholder="Email institucional">
-<input type="text" id="curso" placeholder="Curso">
-  <input type="password" id="senha" placeholder="Senha (mín. 6 caracteres)">
+  <div class="input-group">
+    <input type="text" id="nome" placeholder="Nome completo">
+  </div>
+  
+  <div class="input-group">
+    <input type="email" id="email" placeholder="Email institucional">
+  </div>
 
-  <button onclick="cadastrar()">Cadastrar</button>
+  <div class="input-group">
+    <input type="text" id="curso" placeholder="Seu Curso (ex: Biologia)">
+  </div>
+
+  <div class="input-group">
+    <input type="password" id="senha" placeholder="Senha (mín. 6 caracteres)">
+  </div>
+
+  <button onclick="cadastrar()">Criar Conta</button>
 
   <small>
-    Já tem conta? <a href="login.html">Entrar</a>
+    Já faz parte? <a href="login.html">Entrar agora</a>
   </small>
 </div>
-
-<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
@@ -137,4 +246,5 @@ window.cadastrar = async function(){
 
 </body>
 </html>
+
 
