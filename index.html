@@ -5,51 +5,118 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EcoAção Acadêmica</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
 <style>
-body{
- margin:0;
- font-family:Arial,Helvetica,sans-serif;
- background:linear-gradient(135deg,#2e7d32,#43a047);
- color:#fff;
- display:flex;
- align-items:center;
- justify-content:center;
- height:100vh;
+/* --- ESTILO MODERNO --- */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  /* Degradê igual ao das outras páginas para manter o padrão */
+  background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  color: #333;
 }
-.card{
- background:#ffffff;
- color:#333;
- padding:40px;
- border-radius:20px;
- max-width:420px;
- text-align:center;
- box-shadow:0 10px 30px rgba(0,0,0,.2);
+
+.card {
+  background: #ffffff;
+  padding: 45px 35px;
+  border-radius: 24px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
-h1{color:#2e7d32;margin-bottom:10px}
-p{margin-bottom:30px}
-button{
- width:100%;
- padding:12px;
- margin:10px 0;
- border:none;
- border-radius:12px;
- font-weight:bold;
- cursor:pointer;
- background:#43a047;
- color:#fff;
+
+.icon {
+  font-size: 50px;
+  margin-bottom: 10px;
+  display: block;
 }
-button:hover{background:#2e7d32}
+
+h1 {
+  color: #2e7d32;
+  margin: 0 0 10px 0;
+  font-weight: 600;
+  font-size: 26px;
+}
+
+p {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  font-weight: 300;
+}
+
+/* Botões Estilizados */
+button {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 12px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Botão Principal (Entrar) */
+.btn-login {
+  background: linear-gradient(to right, #2e7d32, #43a047);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+}
+
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+}
+
+/* Botão Secundário (Cadastrar) */
+.btn-cadastro {
+  background: transparent;
+  color: #2e7d32;
+  border: 2px solid #2e7d32;
+}
+
+.btn-cadastro:hover {
+  background: #f1f8f1;
+  transform: translateY(-2px);
+}
+
+.footer {
+  margin-top: 20px;
+  font-size: 11px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
 </style>
 </head>
 
 <body>
-<div class="card">
-<h1>🌱 EcoAção Acadêmica</h1>
-<p>Transformando ações sustentáveis em impacto real dentro da universidade.</p>
 
-<button onclick="location.href='login.html'">Entrar</button>
-<button onclick="location.href='cadastro.html'">Cadastrar</button>
+<div class="card">
+  <span class="icon">🌱</span>
+  <h1>EcoAção Acadêmica</h1>
+  <p>Transformando ações sustentáveis em impacto real dentro da universidade.</p>
+
+  <button class="btn-login" onclick="location.href='login.html'">Entrar</button>
+  <button class="btn-cadastro" onclick="location.href='cadastro.html'">Criar Conta</button>
+  
+  <div class="footer">Sustentabilidade • Educação • Futuro</div>
 </div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 
@@ -66,3 +133,4 @@ button:hover{background:#2e7d32}
 </script>
 </body>
 </html>
+
