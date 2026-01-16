@@ -4,40 +4,174 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ações – EcoAção Acadêmica</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
     <style>
-        :root { --verde-dark: #1b5e20; --verde-primary: #2e7d32; --verde-light: #c8e6c9; --bg: #f0f2f5; --white: #ffffff; --shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        body { margin: 0; font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: #333; padding-bottom: 50px; }
-        header { background: linear-gradient(135deg, var(--verde-dark), var(--verde-primary)); color: #fff; padding: 20px; text-align: center; box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100; }
-        nav { margin-top: 15px; display: flex; justify-content: center; gap: 10px; }
-        nav button { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 8px 15px; border-radius: 20px; cursor: pointer; transition: 0.3s; }
-        nav button:hover { background: rgba(255,255,255,0.4); }
-        .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
-        h2 { text-align: center; color: var(--verde-dark); margin-bottom: 30px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .card { background: var(--white); border-radius: 15px; padding: 20px; text-align: center; box-shadow: var(--shadow); transition: transform 0.2s; display: flex; flex-direction: column; justify-content: space-between; }
-        .card:hover { transform: translateY(-5px); }
-        .impacto { font-size: 10px; text-transform: uppercase; padding: 4px 10px; border-radius: 10px; font-weight: bold; display: inline-block; margin-bottom: 10px; }
+        :root { 
+            --p: #2e7d32; 
+            --s: #43a047; 
+            --bg: #f4f8f6; 
+            --white: #ffffff; 
+            --shadow: 0 10px 25px rgba(0,0,0,0.05); 
+        }
+
+        * { box-sizing: border-box; }
+
+        body { 
+            margin: 0; 
+            font-family: 'Poppins', sans-serif; 
+            background: var(--bg); 
+            color: #333; 
+            padding-bottom: 50px; 
+        }
+
+        /* HEADER ESTILO ECOAÇÃO */
+        header { 
+            background: linear-gradient(135deg, #1b5e20, #2e7d32); 
+            color: #fff; 
+            padding: 20px 5%; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15); 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+        }
+
+        header h1 { margin: 0; font-size: 1.6rem; font-weight: 700; }
+
+        nav { 
+            margin-top: 15px; 
+            display: flex; 
+            justify-content: center; 
+            gap: 12px; 
+        }
+
+        nav button { 
+            background: rgba(255,255,255,0.15); 
+            border: 1px solid rgba(255,255,255,0.3); 
+            color: white; 
+            padding: 8px 18px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.85rem;
+            transition: 0.3s; 
+        }
+
+        nav button:hover { background: rgba(255,255,255,0.3); transform: translateY(-2px); }
+
+        .container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+
+        h2 { text-align: center; color: var(--p); margin-bottom: 35px; font-weight: 700; }
+
+        /* GRID DE CARDS */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 25px; 
+        }
+
+        .card { 
+            background: var(--white); 
+            border-radius: 24px; 
+            padding: 25px; 
+            text-align: center; 
+            box-shadow: var(--shadow); 
+            transition: all 0.3s ease; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .card:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+
+        /* TAGS DE IMPACTO */
+        .impacto { 
+            font-size: 10px; 
+            text-transform: uppercase; 
+            padding: 5px 12px; 
+            border-radius: 20px; 
+            font-weight: 700; 
+            display: inline-block; 
+            margin-bottom: 15px; 
+            letter-spacing: 0.5px;
+        }
+
         .impacto-baixo { background: #e3f2fd; color: #1976d2; }
-        .impacto-médio { background: #fff3e0; color: #f57c00; }
-        .impacto-alto { background: #ffebee; color: #d32f2f; }
-        .icon { font-size: 40px; margin: 10px 0; }
-        .pts { font-weight: bold; color: var(--verde-primary); font-size: 1.1rem; }
-        .status-badge { margin-top: 10px; padding: 8px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; }
-        .pendente { background: #fff9c4; color: #fbc02d; }
-        .aprovado { background: var(--verde-light); color: var(--verde-dark); }
-        input[type="file"] { font-size: 0.8rem; margin: 10px 0; width: 100%; }
-        .btn-enviar { background: var(--verde-primary); color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
-        .btn-enviar:disabled { background: #ccc; cursor: not-allowed; }
+        .impacto-médio { background: #fff3e0; color: #ef6c00; }
+        .impacto-alto { background: #fbe9e7; color: #d84315; }
+
+        .icon { font-size: 45px; margin: 10px 0; display: block; }
+        
+        h3 { font-size: 1.1rem; margin: 10px 0; color: #444; line-height: 1.4; }
+
+        .pts { 
+            font-weight: 700; 
+            color: var(--p); 
+            font-size: 1.2rem; 
+            background: #f0f7f0;
+            display: inline-block;
+            padding: 4px 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        /* STATUS E INPUTS */
+        .status-badge { 
+            margin-top: 10px; 
+            padding: 12px; 
+            border-radius: 12px; 
+            font-size: 0.85rem; 
+            font-weight: 600; 
+        }
+
+        .pendente { background: #fffde7; color: #fbc02d; border: 1px solid #fff9c4; }
+        .aprovado { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+
+        input[type="file"] { 
+            font-size: 0.75rem; 
+            margin: 15px 0; 
+            width: 100%; 
+            color: #777;
+        }
+
+        .btn-enviar { 
+            background: var(--p); 
+            color: white; 
+            border: none; 
+            padding: 12px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            width: 100%; 
+            font-weight: 600; 
+            font-family: 'Poppins', sans-serif;
+            transition: 0.3s;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+        }
+
+        .btn-enviar:hover { background: var(--s); transform: scale(1.02); }
+        .btn-enviar:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; }
+
+        /* Estilo responsivo */
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.3rem; }
+            .grid { gap: 15px; }
+        }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>🌱 EcoAção</h1>
+    <h1>🌱 EcoAção Acadêmica</h1>
     <nav>
         <button onclick="window.location.href='dashboard.html'">Dashboard</button>
         <button onclick="window.location.href='ranking.html'">Ranking</button>
-        <button id="btnLogout">Sair</button>
+        <button id="btnLogout" style="background: rgba(255,0,0,0.2);">Sair</button>
     </nav>
 </header>
 
@@ -212,3 +346,4 @@
 </script>
 </body>
 </html>
+
