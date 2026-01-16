@@ -57,11 +57,7 @@ button{
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-import {
-  getAuth,
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 import {
   getFirestore,
   collection,
@@ -69,15 +65,15 @@ import {
   where,
   getDocs,
   doc,
+  getDoc,
   updateDoc,
   increment
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-/* 🔥 Firebase */
 const firebaseConfig = {
   apiKey: "AIzaSyAgKsk6jSIQk7AQ35xmVpnSn84pU8ca0g8",
   authDomain: "ecoacao-eda80.firebaseapp.com",
-  projectId: "ecoacao-eda80",
+  projectId: "ecoacao-eda80"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -86,18 +82,28 @@ const db = getFirestore(app);
 
 const lista = document.getElementById("lista");
 
-/* 🔒 Proteção ADMIN */
-onAuthStateChanged(auth, async (user)=>{
-  if(!user){
+/* 🔒 PROTEÇÃO DO ADMIN */
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    alert("Faça login");
     window.location.href = "login.html";
+    return;
+  }
+
+  const ref = doc(db, "usuarios", user.uid);
+  const snap = await getDoc(ref);
+
+  if (!snap.exists() || snap.data().admin !== true) {
+    alert("Acesso restrito");
+    window.location.href = "dashboard.html";
     return;
   }
 
   carregarPendentes();
 });
 
-/* 📥 Carregar ações pendentes */
-async function carregarPendentes(){
+/* 📥 CARREGAR AÇÕES PENDENTES */
+async function carregarPendentes() {
   lista.innerHTML = "Carregando...";
 
   const q = query(
@@ -106,15 +112,14 @@ async function carregarPendentes(){
   );
 
   const snap = await getDocs(q);
-
   lista.innerHTML = "";
 
-  if(snap.empty){
+  if (snap.empty) {
     lista.innerHTML = "<p>🎉 Nenhuma ação pendente</p>";
     return;
   }
 
-  snap.forEach(docSnap=>{
+  snap.forEach(docSnap => {
     const a = docSnap.data();
     const id = docSnap.id;
 
@@ -122,16 +127,16 @@ async function carregarPendentes(){
     card.className = "card";
 
     card.innerHTML = `
-      <div class="info">
-        <h4>${a.acao}</h4>
-        <p><strong>Usuário:</strong> ${a.nome}</p>
-        <p><strong>Curso:</strong> ${a.curso}</p>
-        <p><strong>Pontos:</strong> ${a.pontos}</p>
-
-        <div class="actions">
-          <button class="aprovar">Aprovar</button>
-          <button class="rejeitar">Rejeitar</button>
-        </div>
+      <h4>${a.acao}</h4>
+      <p><strong>Usuário:</strong> ${a.nome}</p>
+      <p><strong>Curso:</strong> ${a.curso}</p>
+      <p><strong>Pontos:</strong> ${a.pontos}</p>
+      <p>
+        <a href="${a.comprovanteURL}" target="_blank">📎 Ver comprovante</a>
+      </p>
+      <div class="actions">
+        <button class="aprovar">Aprovar</button>
+        <button class="rejeitar">Rejeitar</button>
       </div>
     `;
 
@@ -142,38 +147,29 @@ async function carregarPendentes(){
   });
 }
 
-/* ✅ Aprovar ação */
-async function aprovar(id, acao){
-  // 1️⃣ marca ação como aprovada
+/* ✅ APROVAR */
+async function aprovar(id, acao) {
+  if (!acao.uid) return;
+
   await updateDoc(doc(db, "acoes_pendentes", id), {
     status: "aprovada"
   });
 
-  // 2️⃣ soma pontos no usuário
   await updateDoc(doc(db, "usuarios", acao.uid), {
     pontos: increment(acao.pontos)
   });
 
-  alert("Ação aprovada ✅");
   carregarPendentes();
 }
 
-/* ❌ Rejeitar ação */
-async function rejeitar(id){
+/* ❌ REJEITAR */
+async function rejeitar(id) {
   await updateDoc(doc(db, "acoes_pendentes", id), {
     status: "rejeitada"
   });
 
-  alert("Ação rejeitada ❌");
   carregarPendentes();
 }
-
-/* 🚪 Logout */
-window.logout = async function(){
-  await signOut(auth);
-  window.location.href = "login.html";
-};
 </script>
-
 </body>
 </html>
