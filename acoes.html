@@ -5,129 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ações – EcoAção Acadêmica</title>
     <style>
-        :root {
-            --verde-dark: #1b5e20;
-            --verde-primary: #2e7d32;
-            --verde-light: #c8e6c9;
-            --bg: #f0f2f5;
-            --white: #ffffff;
-            --shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: #333;
-            padding-bottom: 50px;
-        }
-
-        header {
-            background: linear-gradient(135deg, var(--verde-dark), var(--verde-primary));
-            color: #fff;
-            padding: 20px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        nav {
-            margin-top: 15px;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        nav button {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.4);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
+        :root { --verde-dark: #1b5e20; --verde-primary: #2e7d32; --verde-light: #c8e6c9; --bg: #f0f2f5; --white: #ffffff; --shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        body { margin: 0; font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: #333; padding-bottom: 50px; }
+        header { background: linear-gradient(135deg, var(--verde-dark), var(--verde-primary)); color: #fff; padding: 20px; text-align: center; box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100; }
+        nav { margin-top: 15px; display: flex; justify-content: center; gap: 10px; }
+        nav button { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 8px 15px; border-radius: 20px; cursor: pointer; transition: 0.3s; }
         nav button:hover { background: rgba(255,255,255,0.4); }
-
-        .container {
-            max-width: 1100px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
+        .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
         h2 { text-align: center; color: var(--verde-dark); margin-bottom: 30px; }
-
-        /* Grid de Cards */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .card {
-            background: var(--white);
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            transition: transform 0.2s;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .card { background: var(--white); border-radius: 15px; padding: 20px; text-align: center; box-shadow: var(--shadow); transition: transform 0.2s; display: flex; flex-direction: column; justify-content: space-between; }
         .card:hover { transform: translateY(-5px); }
-
-        .impacto {
-            font-size: 10px;
-            text-transform: uppercase;
-            padding: 4px 10px;
-            border-radius: 10px;
-            font-weight: bold;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-
+        .impacto { font-size: 10px; text-transform: uppercase; padding: 4px 10px; border-radius: 10px; font-weight: bold; display: inline-block; margin-bottom: 10px; }
         .impacto-baixo { background: #e3f2fd; color: #1976d2; }
         .impacto-médio { background: #fff3e0; color: #f57c00; }
         .impacto-alto { background: #ffebee; color: #d32f2f; }
-
         .icon { font-size: 40px; margin: 10px 0; }
-
         .pts { font-weight: bold; color: var(--verde-primary); font-size: 1.1rem; }
-
-        .status-badge {
-            margin-top: 10px;
-            padding: 8px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
-
+        .status-badge { margin-top: 10px; padding: 8px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; }
         .pendente { background: #fff9c4; color: #fbc02d; }
         .aprovado { background: var(--verde-light); color: var(--verde-dark); }
-
-        input[type="file"] {
-            font-size: 0.8rem;
-            margin: 10px 0;
-            width: 100%;
-        }
-
-        .btn-enviar {
-            background: var(--verde-primary);
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            font-weight: bold;
-        }
-
+        input[type="file"] { font-size: 0.8rem; margin: 10px 0; width: 100%; }
+        .btn-enviar { background: var(--verde-primary); color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
         .btn-enviar:disabled { background: #ccc; cursor: not-allowed; }
     </style>
 </head>
@@ -144,19 +43,19 @@
 
 <div class="container">
     <h2>Ações Disponíveis</h2>
-    <div class="grid" id="listaAcoes">
-        </div>
+    <div class="grid" id="listaAcoes"></div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, collection, addDoc, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, query, where, getDocs, serverTimestamp, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
+    /* 🔥 SUA CONFIGURAÇÃO ORIGINAL RECUPERADA 🔥 */
     const firebaseConfig = {
-        apiKey: "AIzaSyAgKsk6jSIQk7AQ35xmVpnSn84pU8ca0g8",
-        authDomain: "ecoacao-eda80.firebaseapp.com",
-        projectId: "ecoacao-eda80"
+      apiKey: "AIzaSyAgKsk6jSIQk7AQ35xmVpnSn84pU8ca0g8",
+      authDomain: "ecoacao-eda80.firebaseapp.com",
+      projectId: "ecoacao-eda80"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -164,20 +63,41 @@
     const db = getFirestore(app);
 
     let userGlobal = null;
-    let acoesStatus = {}; // Para rastrear o que já foi enviado
+    let acoesStatus = {}; 
 
+    // Lista completa das suas ações
     const acoes = [
-        {nome:'Separar resíduos recicláveis', pts:20, impacto:'Baixo', icon:'♻️'},
-        {nome:'Utilizar sacolas reutilizáveis', pts:20, impacto:'Baixo', icon:'🛍️'},
-        {nome:'Destinar resíduos eletrônicos', pts:70, impacto:'Alto', icon:'💻'},
-        {nome:'Plantar muda ou árvore', pts:100, impacto:'Alto', icon:'🌳'},
-        // Adicione as outras ações aqui...
+        {nome:'Separar corretamente resíduos recicláveis',pts:20,impacto:'Baixo',icon:'♻️'},
+        {nome:'Utilizar sacolas reutilizáveis',pts:20,impacto:'Baixo',icon:'🛍️'},
+        {nome:'Utilizar copos reutilizáveis',pts:20,impacto:'Baixo',icon:'🥤'},
+        {nome:'Utilizar talheres reutilizáveis',pts:20,impacto:'Baixo',icon:'🍴'},
+        {nome:'Reutilizar embalagens',pts:30,impacto:'Baixo',icon:'📦'},
+        {nome:'Levar recicláveis a ponto de coleta',pts:40,impacto:'Médio',icon:'🚮'},
+        {nome:'Priorizar produtos com embalagem sustentável',pts:40,impacto:'Médio',icon:'🛒'},
+        {nome:'Utilizar transporte coletivo',pts:30,impacto:'Médio',icon:'🚌'},
+        {nome:'Deslocar-se a pé',pts:30,impacto:'Médio',icon:'🚶'},
+        {nome:'Compartilhar carona',pts:40,impacto:'Médio',icon:'🚗'},
+        {nome:'Destinar pilhas e baterias corretamente',pts:50,impacto:'Alto',icon:'🔋'},
+        {nome:'Destinar resíduos eletrônicos',pts:70,impacto:'Alto',icon:'💻'},
+        {nome:'Produzir material artesanal reutilizando resíduos',pts:60,impacto:'Alto',icon:'🎨'},
+        {nome:'Entregar óleo de cozinha em ponto de coleta',pts:80,impacto:'Alto',icon:'🛢️'},
+        {nome:'Reutilizar água',pts:70,impacto:'Alto',icon:'💧'},
+        {nome:'Utilizar bicicleta',pts:50,impacto:'Alto',icon:'🚲'},
+        {nome:'Plantar muda ou árvore',pts:100,impacto:'Alto',icon:'🌳'},
+        {nome:'Cuidar de horta caseira ou comunitária',pts:80,impacto:'Alto',icon:'🌱'},
+        {nome:'Participar de mutirão de limpeza',pts:70,impacto:'Alto',icon:'🧹'},
+        {nome:'Participar de eventos de educação ambiental',pts:50,impacto:'Alto',icon:'🎓'}
     ];
 
-    // 1. Monitorar Auth
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             userGlobal = user;
+            // Verifica se é admin para redirecionar (opcional)
+            const snap = await getDoc(doc(db, "usuarios", user.uid));
+            if (snap.exists() && snap.data().admin === true) {
+                 window.location.href = "admin.html";
+                 return;
+            }
             await carregarStatusDoUsuario();
             renderAcoes();
         } else {
@@ -185,41 +105,42 @@
         }
     });
 
-    // 2. Buscar no banco o que o usuário já enviou
     async function carregarStatusDoUsuario() {
         const q = query(collection(db, "acoes_pendentes"), where("uid", "==", userGlobal.uid));
         const querySnapshot = await getDocs(q);
         acoesStatus = {};
         querySnapshot.forEach((doc) => {
             const data = doc.data();
-            // Salva o status mais recente daquela ação
+            // Guarda o status (pendente/aprovada/rejeitada)
             acoesStatus[data.acao] = data.status;
         });
     }
 
-    // 3. Renderizar com lógica de bloqueio
     function renderAcoes() {
         const grid = document.getElementById("listaAcoes");
         grid.innerHTML = "";
 
         acoes.forEach((a, index) => {
-            const status = acoesStatus[a.nome]; // 'pendente', 'aprovada' ou undefined
+            const status = acoesStatus[a.nome];
             let controleHTML = '';
+            let cardClass = "card";
 
             if (status === 'pendente') {
                 controleHTML = `<div class="status-badge pendente">⏳ Aguardando Aprovação</div>`;
             } else if (status === 'aprovada') {
                 controleHTML = `<div class="status-badge aprovado">✅ Ação Concluída</div>`;
+                cardClass += " card-concluido"; // Pode estilizar se quiser
             } else {
-                // Se for 'rejeitada' ou não existir, permite enviar
+                // Se não tem envio ou foi rejeitada
                 controleHTML = `
                     <input type="file" id="file-${index}" accept="image/*">
                     <button class="btn-enviar" onclick="enviarAcao(${index})">Enviar Comprovante</button>
+                    ${status === 'rejeitada' ? '<small style="color:red; display:block; margin-top:5px">Último envio rejeitado. Tente novamente.</small>' : ''}
                 `;
             }
 
             grid.innerHTML += `
-                <div class="card">
+                <div class="${cardClass}">
                     <div>
                         <span class="impacto impacto-${a.impacto.toLowerCase()}">${a.impacto} Impacto</span>
                         <div class="icon">${a.icon}</div>
@@ -234,32 +155,35 @@
         });
     }
 
-    // 4. Compressão e Envio
     window.enviarAcao = async (index) => {
         const fileInput = document.getElementById(`file-${index}`);
         if (!fileInput.files[0]) return alert("Por favor, selecione uma foto!");
-
         const acao = acoes[index];
-        
         try {
             const base64 = await comprimirImagem(fileInput.files[0]);
             
+            // Busca dados extras do usuário no banco se necessário, ou usa info básica
+            const snapUser = await getDoc(doc(db, "usuarios", userGlobal.uid));
+            const dadosUser = snapUser.exists() ? snapUser.data() : {};
+
             await addDoc(collection(db, "acoes_pendentes"), {
                 uid: userGlobal.uid,
                 email: userGlobal.email,
+                nome: dadosUser.nome || "Aluno",
+                curso: dadosUser.curso || "-",
                 acao: acao.nome,
                 pontos: acao.pts,
                 impacto: acao.impacto,
-                comprovante: base64,
+                comprovanteBase64: base64, // Mantendo padrão do seu código antigo
                 status: "pendente",
-                dataEnvio: serverTimestamp()
+                criadoEm: serverTimestamp()
             });
 
             alert("Sucesso! Aguarde a validação do administrador.");
-            location.reload(); // Recarrega para atualizar os botões
+            location.reload(); 
         } catch (err) {
             console.error(err);
-            alert("Erro ao enviar. Tente novamente.");
+            alert("Erro ao enviar: " + err.message);
         }
     };
 
@@ -278,17 +202,13 @@
                     canvas.height = img.height * scaleSize;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.7)); // 0.7 é a qualidade
+                    resolve(canvas.toDataURL('image/jpeg', 0.6));
                 };
             };
         });
     }
 
     document.getElementById("btnLogout").onclick = () => signOut(auth);
-
 </script>
 </body>
 </html>
-
-
-
