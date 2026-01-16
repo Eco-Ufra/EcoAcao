@@ -57,19 +57,17 @@ button{
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-import {
-  getAuth,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 import {
   getFirestore,
   collection,
   onSnapshot,
   updateDoc,
-  deleteDoc,
   doc,
   increment,
-  getDoc
+  getDoc,
+  query,
+  where
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -100,13 +98,18 @@ onAuthStateChanged(auth, async (user) => {
   carregar();
 });
 
-/* 📥 Ações pendentes */
+/* 📥 SOMENTE ações pendentes */
 function carregar() {
-  onSnapshot(collection(db, "acoes_pendentes"), (snap) => {
+  const q = query(
+    collection(db, "acoes_pendentes"),
+    where("status", "==", "pendente")
+  );
+
+  onSnapshot(q, (snap) => {
     lista.innerHTML = "";
 
     if (snap.empty) {
-      lista.innerHTML = "<p>Nenhuma ação pendente 🎉</p>";
+      lista.innerHTML = "<p>🎉 Nenhuma ação pendente</p>";
       return;
     }
 
@@ -121,7 +124,7 @@ function carregar() {
           ${
             a.comprovanteBase64
               ? `<img src="${a.comprovanteBase64}" style="max-width:100%;border-radius:10px;margin:10px 0">`
-              : `<p style="color:red">⚠️ Sem comprovante visual</p>`
+              : `<p style="color:red">⚠️ Sem comprovante</p>`
           }
 
           <button onclick="aprovar('${d.id}', '${a.uid}', ${a.pontos})">
@@ -139,20 +142,25 @@ function carregar() {
 
 /* ✅ Aprovar */
 window.aprovar = async (id, uid, pontos) => {
+  await updateDoc(doc(db, "acoes_pendentes", id), {
+    status: "aprovada"
+  });
+
   await updateDoc(doc(db, "usuarios", uid), {
     pontos: increment(pontos)
   });
-
-  await deleteDoc(doc(db, "acoes_pendentes", id));
 };
 
 /* ❌ Rejeitar */
 window.rejeitar = async (id) => {
-  await deleteDoc(doc(db, "acoes_pendentes", id));
+  await updateDoc(doc(db, "acoes_pendentes", id), {
+    status: "rejeitada"
+  });
 };
 </script>
 </body>
 </html>
+
 
 
 
