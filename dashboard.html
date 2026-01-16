@@ -5,60 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard – EcoAção</title>
     <style>
-        :root { --p: #1b5e20; --s: #43a047; --bg: #f0f2f5; }
-        /* Esconde o corpo da página até confirmar que NÃO é admin */
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); display: none; }
+        :root { --p: #1b5e20; --s: #43a047; --bg: #f4f7f6; }
         
-        header { background: var(--p); color: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; }
-        .nav-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 20px; cursor: pointer; margin-left: 10px; font-weight: bold; }
+        /* Começa invisível para evitar erro visual no carregamento */
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); visibility: hidden; }
         
-        .container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+        .header { background: var(--p); color: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .logo { font-weight: bold; font-size: 1.2rem; }
         
-        /* Card de Perfil Organizado */
-        .profile-card { background: white; border-radius: 20px; overflow: hidden; display: flex; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px; }
-        .user-side { padding: 30px; flex: 1; background: linear-gradient(135deg, var(--p), var(--s)); color: white; }
-        .score-side { padding: 30px; width: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: white; }
-        
-        .points-val { font-size: 3rem; font-weight: 800; color: var(--p); line-height: 1; }
-        .points-lab { font-size: 0.8rem; color: #666; font-weight: bold; margin-top: 5px; }
+        .nav-btns button { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: 600; margin-left: 8px; }
+        .btn-sair { background: #c62828 !important; }
 
-        /* Grid de Histórico */
-        .h-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .h-card { background: white; padding: 15px; border-radius: 15px; border-left: 6px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .h-card.aprovada { border-left-color: #2e7d32; }
-        .h-card.rejeitada { border-left-color: #d32f2f; }
-        .status { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; display: block; }
-        .h-card img { width: 100%; height: 150px; object-fit: cover; border-radius: 10px; margin-top: 10px; }
+        .main { max-width: 900px; margin: 30px auto; padding: 0 20px; }
 
-        @media (max-width: 600px) { .profile-card { flex-direction: column; } .score-side { width: 100%; } }
+        /* Card de Perfil */
+        .profile-box { 
+            background: white; border-radius: 20px; display: flex; overflow: hidden; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 30px; 
+        }
+        .user-info { padding: 35px; flex: 1; background: linear-gradient(135deg, var(--p), var(--s)); color: white; }
+        .user-info h2 { margin: 0; font-size: 1.8rem; }
+        .user-info p { margin: 8px 0 0; opacity: 0.9; }
+
+        .user-score { 
+            padding: 35px; width: 180px; background: white; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+        }
+        .score-num { font-size: 3.2rem; font-weight: 900; color: var(--p); line-height: 1; }
+        .score-label { font-size: 0.75rem; color: #888; font-weight: bold; margin-top: 5px; letter-spacing: 1px; }
+
+        /* Lista de Ações */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .card-acao { background: white; padding: 15px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: relative; }
+        .status-tag { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; padding: 4px 10px; border-radius: 5px; margin-bottom: 10px; display: inline-block; }
+        
+        .pendente { background: #fff8e1; color: #b7791f; }
+        .aprovada { background: #e8f5e9; color: #2e7d32; }
+        .rejeitada { background: #ffebee; color: #c62828; }
+
+        .img-acao { width: 100%; height: 160px; object-fit: cover; border-radius: 10px; margin-top: 10px; background: #eee; }
+
+        @media (max-width: 600px) {
+            .profile-box { flex-direction: column; }
+            .user-score { width: 100%; padding: 20px; border-top: 1px solid #eee; }
+        }
     </style>
 </head>
-<body id="body">
+<body id="dashboardBody">
 
-<header>
-    <div style="font-weight:bold; font-size:1.2rem">🌱 EcoAção</div>
-    <div>
-        <button class="nav-btn" onclick="location.href='acoes.html'">+ Ação</button>
-        <button class="nav-btn" onclick="logout()" style="background:#c62828">Sair</button>
-    </div>
-</header>
-
-<div class="container">
-    <div class="profile-card">
-        <div class="user-side">
-            <h2 id="txtNome" style="margin:0">Carregando...</h2>
-            <p id="txtCurso" style="margin:10px 0 0; opacity: 0.9;">Curso: ---</p>
-            <p id="txtEmail" style="margin:5px 0 0; font-size: 0.8rem; opacity: 0.7;">---</p>
+    <header class="header">
+        <div class="logo">🌱 EcoAção</div>
+        <div class="nav-btns">
+            <button onclick="location.href='acoes.html'">+ Nova Ação</button>
+            <button onclick="location.href='ranking.html'">Ranking</button>
+            <button class="btn-sair" onclick="fazerLogout()">Sair</button>
         </div>
-        <div class="score-side">
-            <div class="points-val" id="txtPontos">0</div>
-            <div class="points-lab">PONTOS</div>
-        </div>
-    </div>
+    </header>
 
-    <h3 style="color:#444">Minhas Atividades</h3>
-    <div id="historico" class="h-grid"></div>
-</div>
+    <main class="main">
+        <div class="profile-box">
+            <div class="user-info">
+                <h2 id="exibirNome">Carregando...</h2>
+                <p id="exibirCurso">---</p>
+                <p id="exibirEmail" style="font-size: 0.8rem; opacity: 0.7; margin-top: 15px;">---</p>
+            </div>
+            <div class="user-score">
+                <div class="score-num" id="exibirPontos">0</div>
+                <div class="score-label">PONTOS</div>
+            </div>
+        </div>
+
+        <h3 style="color:#333; margin-bottom: 20px;">📋 Meu Histórico de Ações</h3>
+        <div id="containerAcoes" class="grid">
+            </div>
+    </main>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
@@ -71,52 +91,81 @@
         projectId: "ecoacao-eda80"
     };
 
+    // Inicializar Firebase com tratamento de erro
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
     onAuthStateChanged(auth, async (user) => {
-        if (!user) { window.location.href = "login.html"; return; }
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
 
-        const snap = await getDoc(doc(db, "usuarios", user.uid));
-        if (snap.exists()) {
-            const d = snap.data();
-            
-            // SE FOR ADMIN, NÃO DEIXA NEM VER A PÁGINA
-            if (d.admin === true) {
-                window.location.replace("admin.html");
-                return; 
-            }
+        try {
+            const userRef = doc(db, "usuarios", user.uid);
+            const userSnap = await getDoc(userRef);
 
-            // SE NÃO FOR ADMIN, MOSTRA A PÁGINA
-            document.getElementById("body").style.display = "block";
-            document.getElementById("txtNome").innerText = d.nome || "Estudante";
-            document.getElementById("txtCurso").innerText = d.curso || "---";
-            document.getElementById("txtPontos").innerText = d.pontos || 0;
-            document.getElementById("txtEmail").innerText = user.email;
+            if (userSnap.exists()) {
+                const dados = userSnap.data();
 
-            // Carrega Histórico em tempo real
-            const q = query(collection(db, "acoes_pendentes"), where("uid", "==", user.uid));
-            onSnapshot(q, (s) => {
-                const h = document.getElementById("historico");
-                h.innerHTML = "";
-                s.forEach(docSnap => {
-                    const acao = docSnap.data();
-                    const card = document.createElement("div");
-                    card.className = `h-card ${acao.status}`;
-                    card.innerHTML = `
-                        <span class="status" style="color:${acao.status === 'aprovada' ? 'green' : (acao.status === 'rejeitada' ? 'red' : '#b7791f')}">${acao.status || 'pendente'}</span>
-                        <strong style="display:block; margin-bottom:5px">${acao.acao}</strong>
-                        <small>Pontos: ${acao.pontos}</small>
-                        ${acao.comprovanteBase64 ? `<img src="${acao.comprovanteBase64}">` : ''}
-                    `;
-                    h.appendChild(card);
+                // 1. SEGURANÇA: Se for admin, não entra aqui
+                if (dados.admin === true) {
+                    window.location.replace("admin.html");
+                    return;
+                }
+
+                // 2. MOSTRAR TELA
+                document.getElementById("dashboardBody").style.visibility = "visible";
+
+                // 3. PREENCHER DADOS
+                document.getElementById("exibirNome").innerText = dados.nome || "Usuário";
+                document.getElementById("exibirCurso").innerText = "Curso: " + (dados.curso || "Não informado");
+                document.getElementById("exibirEmail").innerText = user.email;
+                document.getElementById("exibirPontos").innerText = dados.pontos || 0;
+
+                // 4. CARREGAR AÇÕES EM TEMPO REAL
+                const q = query(collection(db, "acoes_pendentes"), where("uid", "==", user.uid));
+                onSnapshot(q, (snapshot) => {
+                    const container = document.getElementById("containerAcoes");
+                    container.innerHTML = "";
+                    
+                    if (snapshot.empty) {
+                        container.innerHTML = "<p style='color:#666'>Você ainda não enviou ações.</p>";
+                        return;
+                    }
+
+                    snapshot.forEach(docAcao => {
+                        const acao = docAcao.data();
+                        const card = document.createElement("div");
+                        card.className = "card-acao";
+                        
+                        const statusClass = acao.status === 'aprovada' ? 'aprovada' : (acao.status === 'rejeitada' ? 'rejeitada' : 'pendente');
+                        
+                        card.innerHTML = `
+                            <span class="status-tag ${statusClass}">${acao.status || 'pendente'}</span>
+                            <div style="font-weight:bold; color:#333">${acao.acao}</div>
+                            <div style="font-size:0.85rem; color:#666">Valor: ${acao.pontos} pontos</div>
+                            ${acao.comprovanteBase64 ? `<img src="${acao.comprovanteBase64}" class="img-acao">` : ''}
+                            ${acao.motivoRejeicao ? `<p style="color:red; font-size:0.75rem; margin-top:10px"><b>Motivo:</b> ${acao.motivoRejeicao}</p>` : ''}
+                        `;
+                        container.appendChild(card);
+                    });
                 });
-            });
+
+            } else {
+                alert("Erro: Cadastro não encontrado no banco de dados.");
+                await signOut(auth);
+                window.location.href = "login.html";
+            }
+        } catch (error) {
+            console.error("Erro no Dashboard:", error);
         }
     });
 
-    window.logout = () => signOut(auth).then(() => location.href = "login.html");
+    window.fazerLogout = () => {
+        signOut(auth).then(() => { window.location.href = "login.html"; });
+    };
 </script>
 </body>
 </html>
