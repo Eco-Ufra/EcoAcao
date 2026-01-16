@@ -17,7 +17,12 @@ header{
   padding:20px;
 }
 header h1{margin:0}
-nav{margin-top:10px}
+nav{
+  margin-top:10px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
 nav button{
   background:#1b5e20;
   color:#fff;
@@ -35,24 +40,39 @@ main{
   border-radius:18px;
 }
 
+.toggle{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px;
+}
+.toggle button{
+  background:#e0e0e0;
+  color:#333;
+  border:none;
+  padding:8px 14px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+}
+.toggle button.ativo{
+  background:#2e7d32;
+  color:#fff;
+}
+
 table{
   width:100%;
   border-collapse:collapse;
 }
-
 th, td{
   padding:12px;
   text-align:left;
 }
-
 th{
   background:#e8f5e9;
 }
-
 tr:nth-child(even){
   background:#f9f9f9;
 }
-
 .rank{
   font-weight:bold;
   color:#2e7d32;
@@ -72,17 +92,24 @@ tr:nth-child(even){
 </header>
 
 <main>
-  <table>
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Nome</th>
-        <th>Curso</th>
-        <th>Pontos</th>
-      </tr>
-    </thead>
-    <tbody id="ranking"></tbody>
-  </table>
+
+<div class="toggle">
+  <button id="btnGeral" class="ativo" onclick="mostrarGeral()">Ranking Geral</button>
+  <button id="btnMensal" onclick="mostrarMensal()">Ranking Mensal</button>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Nome</th>
+      <th>Curso</th>
+      <th>Pontos</th>
+    </tr>
+  </thead>
+  <tbody id="ranking"></tbody>
+</table>
+
 </main>
 
 <script type="module">
@@ -112,6 +139,10 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 const tabela = document.getElementById("ranking");
+const btnGeral = document.getElementById("btnGeral");
+const btnMensal = document.getElementById("btnMensal");
+
+let unsubscribe = null;
 
 /* 🔒 Proteção */
 onAuthStateChanged(auth, (user)=>{
@@ -119,50 +150,86 @@ onAuthStateChanged(auth, (user)=>{
     window.location.href = "login.html";
     return;
   }
-
-  carregarRanking();
+  carregarRankingGeral();
 });
 
-/* 🏆 Ranking em tempo real */
-function carregarRanking(){
+/* 🏆 Ranking Geral */
+function carregarRankingGeral(){
+  if(unsubscribe) unsubscribe();
+
+  btnGeral.classList.add("ativo");
+  btnMensal.classList.remove("ativo");
+
   const q = query(
     collection(db, "usuarios"),
     orderBy("pontos", "desc")
   );
 
-  onSnapshot(q, (snap)=>{
-    tabela.innerHTML = "";
-    let posicao = 1;
-
-    snap.forEach(doc=>{
-      const u = doc.data();
-
-      if(u.admin === true) return; // admin não aparece
-
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td class="rank">${posicao}º</td>
-        <td>${u.nome}</td>
-        <td>${u.curso || "-"}</td>
-        <td>${u.pontos || 0}</td>
-      `;
-      tabela.appendChild(tr);
-      posicao++;
-    });
+  unsubscribe = onSnapshot(q, snap=>{
+    renderTabela(snap);
   });
 }
 
-/* 🧭 Navegação */
-window.ir = function(p){
-  window.location.href = p;
-};
+/* 📅 Ranking Mensal */
+function carregarRankingMensal(){
+  if(unsubscribe) unsubscribe();
+
+  btnMensal.classList.add("ativo");
+  btnGeral.classList.remove("ativo");
+
+  const mes = new Date().toISOString().slice(0,7); // ex: 2026-01
+
+  const q = query(
+    collection(db, "ranking_mensal", mes, "usuarios"),
+    orderBy("pontos", "desc")
+  );
+
+  unsubscribe = onSnapshot(q, snap=>{
+    renderTabela(snap);
+  });
+}
+
+/* 🎖️ Renderização com medalhas */
+function renderTabela(snap){
+  tabela.innerHTML = "";
+  let posicao = 1;
+
+  snap.forEach(doc=>{
+    const u = doc.data();
+    if(u.admin === true) return;
+
+    let medalha = "";
+    if(posicao === 1) medalha = "🥇";
+    if(posicao === 2) medalha = "🥈";
+    if(posicao === 3) medalha = "🥉";
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="rank">${medalha} ${posicao}º</td>
+      <td>${u.nome}</td>
+      <td>${u.curso || "-"}</td>
+      <td>${u.pontos || 0}</td>
+    `;
+    tabela.appendChild(tr);
+    posicao++;
+  });
+
+  if(posicao === 1){
+    tabela.innerHTML = "<tr><td colspan='4'>Nenhum dado disponível</td></tr>";
+  }
+}
+
+/* 🔀 Botões */
+window.mostrarGeral = carregarRankingGeral;
+window.mostrarMensal = carregarRankingMensal;
 
 /* 🚪 Logout */
-window.logout = async function(){
+window.logout = async ()=>{
   await signOut(auth);
   window.location.href = "login.html";
 };
-</script>
 
+window.ir = p => window.location.href = p;
+</script>
 </body>
 </html>
