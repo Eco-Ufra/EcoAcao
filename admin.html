@@ -57,16 +57,12 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // VERIFICA SE É ADMIN MESMO
     onAuthStateChanged(auth, async (user) => {
         if (!user) { window.location.href = "login.html"; return; }
-
         const snap = await getDoc(doc(db, "usuarios", user.uid));
         
-        // AJUSTE AQUI: Verifica o campo 'admin' conforme seu Firebase
         if (!snap.exists() || snap.data().admin !== true) {
-            alert("Acesso restrito!");
-            window.location.href = "dashboard.html";
+            window.location.replace("dashboard.html");
             return;
         }
         carregarPendentes();
@@ -74,55 +70,37 @@
 
     function carregarPendentes() {
         const q = query(collection(db, "acoes_pendentes"), where("status", "==", "pendente"));
-        
         onSnapshot(q, (snap) => {
             const list = document.getElementById("listaPendentes");
-            list.innerHTML = "";
-
-            if (snap.empty) {
-                list.innerHTML = `<div class="empty">🎉 Nenhuma ação para validar no momento!</div>`;
-                return;
-            }
-
+            list.innerHTML = snap.empty ? `<p class="empty">Tudo validado! ✅</p>` : "";
             snap.forEach(d => {
                 const acao = d.data();
                 const id = d.id;
                 const card = document.createElement("div");
                 card.className = "card-admin";
                 card.innerHTML = `
-                    <span class="user-tag">👤 ${acao.nome || 'Usuário'} (${acao.curso || 'S/C'})</span>
-                    <div class="acao-nome">${acao.acao}</div>
-                    <div style="font-weight:bold; color:var(--secondary)">+${acao.pontos} Pontos</div>
-                    
-                    ${acao.comprovanteBase64 ? `<img src="${acao.comprovanteBase64}" class="comprovante" onclick="window.open(this.src)">` : '<p style="color:red">Sem foto</p>'}
-
+                    <span class="user-tag">👤 ${acao.nome || 'Usuário'} | ${acao.curso || 'S/C'}</span>
+                    <div style="font-weight:bold; font-size:1.1rem">${acao.acao}</div>
+                    <div style="color:var(--secondary)">+${acao.pontos} Pontos</div>
+                    <img src="${acao.comprovanteBase64}" class="comprovante" onclick="window.open(this.src)">
                     <div class="btn-group">
                         <button class="btn-rejeitar" onclick="rejeitar('${id}')">Rejeitar</button>
                         <button class="btn-aprovar" onclick="aprovar('${id}', '${acao.uid}', ${acao.pontos})">Aprovar</button>
-                    </div>
-                `;
+                    </div>`;
                 list.appendChild(card);
             });
         });
     }
 
     window.aprovar = async (docId, userId, pts) => {
-        if(!confirm("Aprovar esta ação?")) return;
-        try {
-            // 1. Marca como aprovada
-            await updateDoc(doc(db, "acoes_pendentes", docId), { status: "aprovada" });
-            // 2. Soma pontos no perfil do usuário
-            await updateDoc(doc(db, "usuarios", userId), { pontos: increment(pts) });
-        } catch(e) { alert("Erro ao aprovar"); }
+        if(!confirm("Confirmar aprovação?")) return;
+        await updateDoc(doc(db, "acoes_pendentes", docId), { status: "aprovada" });
+        await updateDoc(doc(db, "usuarios", userId), { pontos: increment(pts) });
     };
 
     window.rejeitar = async (id) => {
         const motivo = prompt("Motivo da rejeição:");
-        if (motivo === null) return;
-        await updateDoc(doc(db, "acoes_pendentes", id), { 
-            status: "rejeitada",
-            motivoRejeicao: motivo 
-        });
+        if (motivo !== null) await updateDoc(doc(db, "acoes_pendentes", id), { status: "rejeitada", motivoRejeicao: motivo });
     };
 
     window.logout = () => signOut(auth).then(() => location.href = "login.html");
