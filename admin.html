@@ -2,31 +2,99 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Admin – EcoAção</title>
+    <title>Painel Admin – EcoAção</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        :root { --p: #1b5e20; --bg: #f4f7f6; }
-        body { margin: 0; font-family: sans-serif; background: var(--bg); display: none; }
-        header { background: #111; color: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; }
-        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .img-val { width: 100%; height: 200px; object-fit: contain; background: #000; border-radius: 10px; margin: 10px 0; }
-        .btns { display: flex; gap: 10px; }
-        button { flex: 1; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .btn-ok { background: #2e7d32; color: white; }
-        .btn-no { background: #fee; color: #c62828; border: 1px solid #c62828; }
+        :root { 
+            --primary: #1b5e20; 
+            --danger: #c62828; 
+            --bg: #f0f2f5; 
+            --card-white: #ffffff;
+        }
+
+        body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); display: none; }
+        
+        header { 
+            background: #111; color: white; padding: 15px 5%; 
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        
+        h2 { color: #333; border-left: 5px solid var(--primary); padding-left: 15px; }
+
+        /* Grid Organizada */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+            gap: 25px; 
+            margin-top: 20px;
+        }
+
+        .card { 
+            background: var(--card-white); border-radius: 16px; 
+            overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            display: flex; flex-direction: column;
+            border: 1px solid #ddd;
+        }
+
+        .card-content { padding: 20px; flex-grow: 1; }
+
+        .user-badge { font-size: 0.75rem; font-weight: bold; color: var(--primary); text-transform: uppercase; display: block; margin-bottom: 5px; }
+        .acao-titulo { font-size: 1.15rem; font-weight: bold; color: #222; margin: 0 0 10px 0; }
+
+        /* Moldura de Imagem Fixa - O SEGREDO DO ALINHAMENTO */
+        .img-container {
+            width: 100%;
+            height: 220px; /* Altura fixa para todos */
+            background: #e0e0e0;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .img-val { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; /* Faz a foto preencher o espaço sem distorcer */
+            transition: transform 0.3s;
+        }
+        
+        .img-container:hover .img-val { transform: scale(1.05); }
+
+        .btns { 
+            display: flex; gap: 0; border-top: 1px solid #eee; 
+        }
+
+        button { 
+            flex: 1; padding: 15px; border: none; cursor: pointer; 
+            font-weight: bold; font-size: 0.9rem; transition: 0.2s;
+        }
+
+        .btn-no { background: #fff; color: var(--danger); }
+        .btn-no:hover { background: #ffebee; }
+
+        .btn-ok { background: var(--primary); color: white; }
+        .btn-ok:hover { opacity: 0.9; }
+
+        .empty-state { text-align: center; padding: 100px 20px; color: #888; grid-column: 1/-1; }
     </style>
 </head>
-<body id="body">
+<body id="adminBody">
 
 <header>
-    <div style="font-weight:bold">🛡️ ADMINISTRAÇÃO</div>
-    <button onclick="logout()" style="background:#444; color:white; border:none; padding:5px 15px; border-radius:15px; cursor:pointer;">Sair</button>
+    <div style="font-weight:bold; display:flex; align-items:center; gap:10px;">
+        <span style="font-size:1.5rem">🛡️</span> PAINEL DE CONTROLE
+    </div>
+    <button onclick="logout()" style="background:#333; color:white; border:1px solid #555; padding:8px 18px; border-radius:20px; cursor:pointer; font-weight:bold;">Sair</button>
 </header>
 
 <div class="container">
-    <h2>Validações Pendentes</h2>
-    <div id="lista" class="grid"></div>
+    <h2>Ações Aguardando Aprovação</h2>
+    <div id="lista" class="grid">
+        <p style="grid-column: 1/-1; text-align: center;">Carregando...</p>
+    </div>
 </div>
 
 <script type="module">
@@ -46,48 +114,69 @@
 
     onAuthStateChanged(auth, async (user) => {
         if (!user) { window.location.href = "login.html"; return; }
+        
         const snap = await getDoc(doc(db, "usuarios", user.uid));
         
-        // SE NÃO FOR ADMIN, CHUTA PARA O DASHBOARD
         if (!snap.exists() || snap.data().admin !== true) {
             window.location.replace("dashboard.html");
             return;
         }
         
-        // SE FOR ADMIN, MOSTRA A TELA
-        document.getElementById("body").style.display = "block";
-        
-        // Carrega pendentes
+        document.getElementById("adminBody").style.display = "block";
+        carregarPendentes();
+    });
+
+    function carregarPendentes() {
         const q = query(collection(db, "acoes_pendentes"), where("status", "==", "pendente"));
-        onSnapshot(q, (s) => {
-            const l = document.getElementById("lista");
-            l.innerHTML = s.empty ? "Tudo limpo! ✅" : "";
-            s.forEach(d => {
+        
+        onSnapshot(q, (snapshot) => {
+            const container = document.getElementById("lista");
+            container.innerHTML = "";
+
+            if (snapshot.empty) {
+                container.innerHTML = `<div class="empty-state"><h3>Tudo em dia! ✅</h3><p>Não há novas fotos para validar.</p></div>`;
+                return;
+            }
+
+            snapshot.forEach(d => {
                 const a = d.data();
                 const card = document.createElement("div");
                 card.className = "card";
                 card.innerHTML = `
-                    <small>Aluno: ${a.nome || '---'}</small>
-                    <h3>${a.acao}</h3>
-                    <img src="${a.comprovanteBase64}" class="img-val">
+                    <div class="img-container" onclick="window.open('${a.comprovanteBase64}')">
+                        <img src="${a.comprovanteBase64}" class="img-val" title="Clique para ampliar">
+                    </div>
+                    <div class="card-content">
+                        <span class="user-badge">👤 ${a.nome || 'Usuário'} | ${a.curso || 'S/C'}</span>
+                        <h3 class="acao-titulo">${a.acao}</h3>
+                        <div style="color:#666; font-size:0.9rem">Valor: <b>${a.pontos} pontos</b></div>
+                    </div>
                     <div class="btns">
-                        <button class="btn-no" onclick="rejeitar('${d.id}')">Rejeitar</button>
-                        <button class="btn-ok" onclick="aprovar('${d.id}', '${a.uid}', ${a.pontos})">Aprovar</button>
-                    </div>`;
-                l.appendChild(card);
+                        <button class="btn-no" onclick="rejeitar('${d.id}')">REJEITAR</button>
+                        <button class="btn-ok" onclick="aprovar('${d.id}', '${a.uid}', ${a.pontos})">APROVAR</button>
+                    </div>
+                `;
+                container.appendChild(card);
             });
         });
-    });
+    }
 
     window.aprovar = async (did, uid, pts) => {
-        if(!confirm("Aprovar?")) return;
-        await updateDoc(doc(db, "acoes_pendentes", did), { status: "aprovada" });
-        await updateDoc(doc(db, "usuarios", uid), { pontos: increment(pts) });
+        if(!confirm("Deseja aprovar e somar os pontos para o aluno?")) return;
+        try {
+            await updateDoc(doc(db, "acoes_pendentes", did), { status: "aprovada" });
+            await updateDoc(doc(db, "usuarios", uid), { pontos: increment(pts) });
+        } catch(e) { alert("Erro ao aprovar"); }
     };
 
     window.rejeitar = async (id) => {
-        const m = prompt("Motivo:");
-        if (m) await updateDoc(doc(db, "acoes_pendentes", id), { status: "rejeitada", motivoRejeicao: m });
+        const m = prompt("Por que esta ação foi rejeitada? (O aluno verá este motivo)");
+        if (m) {
+            await updateDoc(doc(db, "acoes_pendentes", id), { 
+                status: "rejeitada", 
+                motivoRejeicao: m 
+            });
+        }
     };
 
     window.logout = () => signOut(auth).then(() => location.href = "login.html");
