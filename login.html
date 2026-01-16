@@ -74,7 +74,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyAgKsk6jSIQk7AQ35xmVpnSn84pU8ca0g8",
   authDomain: "ecoacao-eda80.firebaseapp.com",
   projectId: "ecoacao-eda80",
-  storageBucket: "ecoacao-eda80.firebasestorage.app",
+  storageBucket: "ecoacao-eda80.appspot.com",
   messagingSenderId: "870282813916",
   appId: "1:870282813916:web:0105f475578aefc6c8af19"
 };
@@ -118,10 +118,16 @@ window.login = async function(){
       window.location.href = "dashboard.html";
     }
 
-  }catch(err){
+ catch(err){
+  if(err.code === "auth/wrong-password"){
+    alert("Senha incorreta");
+  }else if(err.code === "auth/user-not-found"){
+    alert("Usuário não encontrado");
+  }else{
     alert("Erro no login");
-    console.error(err);
   }
+  console.error(err);
+}
 };
 </script>
 
