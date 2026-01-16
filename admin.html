@@ -43,107 +43,89 @@
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-import { getFirestore, collection, query, where, onSnapshot, updateDoc, doc, increment, getDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, collection, query, where, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-/* 🔥 SUA CONFIGURAÇÃO ORIGINAL RECUPERADA 🔥 */
-const firebaseConfig = {
-  apiKey: "AIzaSyAgKsk6jSIQk7AQ35xmVpnSn84pU8ca0g8",
-  authDomain: "ecoacao-eda80.firebaseapp.com",
-  projectId: "ecoacao-eda80"
-};
+    const firebaseConfig = {
+        apiKey: "AIzaSyAgKsk6jSIQk7AQ35xmVpnSn84pU8ca0g8",
+        authDomain: "ecoacao-eda80.firebaseapp.com",
+        projectId: "ecoacao-eda80"
+    };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-const listaDiv = document.getElementById("listaPendentes");
+    // VERIFICA SE É ADMIN MESMO
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) { window.location.href = "login.html"; return; }
 
-onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-        window.location.href = "login.html";
-        return;
-    }
-    const userRef = doc(db, "usuarios", user.uid);
-    const userSnap = await getDoc(userRef);
-
-    if (!userSnap.exists() || userSnap.data().admin !== true) {
-        alert("Acesso negado. Admin only.");
-        window.location.href = "dashboard.html";
-        return;
-    }
-    iniciarListener();
-});
-
-function iniciarListener() {
-    const q = query(collection(db, "acoes_pendentes"), where("status", "==", "pendente"));
-
-    onSnapshot(q, (snapshot) => {
-        listaDiv.innerHTML = "";
-        if (snapshot.empty) {
-            listaDiv.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;">🎉 Tudo limpo! Nenhuma ação pendente.</div>`;
+        const snap = await getDoc(doc(db, "usuarios", user.uid));
+        
+        // AJUSTE AQUI: Verifica o campo 'admin' conforme seu Firebase
+        if (!snap.exists() || snap.data().admin !== true) {
+            alert("Acesso restrito!");
+            window.location.href = "dashboard.html";
             return;
         }
-
-        snapshot.forEach((d) => {
-            const data = d.data();
-            const id = d.id;
-            
-            // Aceita comprovanteBase64 (seu padrão antigo) ou comprovante (novo)
-            const imgSrc = data.comprovanteBase64 || data.comprovante || '';
-            const nomeUser = data.nome || data.email || "Usuário";
-
-            const card = document.createElement("div");
-            card.className = "card";
-            card.innerHTML = `
-                <div>
-                    <div class="user-info">👤 ${nomeUser} <br> <small>${data.curso || ''}</small></div>
-                    <h3 class="acao-title">${data.acao}</h3>
-                    <span class="pontos-badge">+${data.pontos} Pontos</span>
-                    ${imgSrc ? 
-                        `<img src="${imgSrc}" class="comprovante-img" onclick="window.open(this.src)" title="Clique para ampliar">` : 
-                        `<p style="color:red; text-align:center;">⚠️ Sem imagem</p>`
-                    }
-                </div>
-                <div class="actions">
-                    <button class="btn-rejeitar" onclick="rejeitar('${id}')">Rejeitar</button>
-                    <button class="btn-aprovar" onclick="aprovar('${id}', '${data.uid}', ${data.pontos})">Aprovar</button>
-                </div>
-            `;
-            listaDiv.appendChild(card);
-        });
+        carregarPendentes();
     });
-}
 
-window.aprovar = async (docId, userId, pontos) => {
-    if(!confirm("Aprovar e dar pontos?")) return;
-    try {
-        await updateDoc(doc(db, "acoes_pendentes", docId), { status: "aprovada" });
-        await updateDoc(doc(db, "usuarios", userId), { pontos: increment(pontos) });
-    } catch (error) {
-        alert("Erro: " + error.message);
+    function carregarPendentes() {
+        const q = query(collection(db, "acoes_pendentes"), where("status", "==", "pendente"));
+        
+        onSnapshot(q, (snap) => {
+            const list = document.getElementById("listaPendentes");
+            list.innerHTML = "";
+
+            if (snap.empty) {
+                list.innerHTML = `<div class="empty">🎉 Nenhuma ação para validar no momento!</div>`;
+                return;
+            }
+
+            snap.forEach(d => {
+                const acao = d.data();
+                const id = d.id;
+                const card = document.createElement("div");
+                card.className = "card-admin";
+                card.innerHTML = `
+                    <span class="user-tag">👤 ${acao.nome || 'Usuário'} (${acao.curso || 'S/C'})</span>
+                    <div class="acao-nome">${acao.acao}</div>
+                    <div style="font-weight:bold; color:var(--secondary)">+${acao.pontos} Pontos</div>
+                    
+                    ${acao.comprovanteBase64 ? `<img src="${acao.comprovanteBase64}" class="comprovante" onclick="window.open(this.src)">` : '<p style="color:red">Sem foto</p>'}
+
+                    <div class="btn-group">
+                        <button class="btn-rejeitar" onclick="rejeitar('${id}')">Rejeitar</button>
+                        <button class="btn-aprovar" onclick="aprovar('${id}', '${acao.uid}', ${acao.pontos})">Aprovar</button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        });
     }
-};
 
-window.rejeitar = async (docId) => {
-    const motivo = prompt("Motivo da rejeição:");
-    if (motivo === null) return;
-    try {
-        await updateDoc(doc(db, "acoes_pendentes", docId), { status: "rejeitada", motivoRejeicao: motivo });
-    } catch (error) {
-        alert("Erro: " + error.message);
-    }
-};
+    window.aprovar = async (docId, userId, pts) => {
+        if(!confirm("Aprovar esta ação?")) return;
+        try {
+            // 1. Marca como aprovada
+            await updateDoc(doc(db, "acoes_pendentes", docId), { status: "aprovada" });
+            // 2. Soma pontos no perfil do usuário
+            await updateDoc(doc(db, "usuarios", userId), { pontos: increment(pts) });
+        } catch(e) { alert("Erro ao aprovar"); }
+    };
 
-window.logout = async () => {
-    await signOut(auth);
-    window.location.href = "login.html";
-};
+    window.rejeitar = async (id) => {
+        const motivo = prompt("Motivo da rejeição:");
+        if (motivo === null) return;
+        await updateDoc(doc(db, "acoes_pendentes", id), { 
+            status: "rejeitada",
+            motivoRejeicao: motivo 
+        });
+    };
+
+    window.logout = () => signOut(auth).then(() => location.href = "login.html");
 </script>
 </body>
 </html>
-
-
-
-
