@@ -42,16 +42,54 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
     const acoes = [
-        {nome:'Água: Economizar no banho',pts:20,icon:'💧'},
-        {nome:'Energia: Apagar luzes vadias',pts:20,icon:'💡'},
-        {nome:'Recicla: Separar o lixo',pts:20,icon:'♻️'},
-        {nome:'Planta: Plantar uma muda',pts:100,icon:'🌳'},
-        {nome:'Social: Convidar um amigo',pts:40,icon:'📢'},
-        {nome:'Limpeza: Coleta em área verde',pts:50,icon:'🧹'},
-        {nome:'Papel: Usar rascunhos',pts:20,icon:'📄'},
-        {nome:'Transporte: Carona ou Bike',pts:40,icon:'🚲'},
-        {nome:'Plástico: Copo reutilizável',pts:30,icon:'🥤'},
-        {nome:'Recicla: Óleo de cozinha',pts:50,icon:'🛢️'}
+    // 💧 ÁGUA (Conquista: Gota de Ouro)
+    {nome:'Água: Usar garrafa própria (reutilizável)', pts:15, icon:'🥤', impacto:'Baixo'},
+    {nome:'Água: Reutilizar Água Para Atividade Domésticas, pts:20, icon:'💦', impacto:'Baixo'},
+    {nome:'Água: Aproveitar a água da chuva', pts:40, icon:'🪣', impacto:'Médio'},
+
+    // ⚡ ENERGIA (Conquista: Faísca Verde)
+    {nome:'Energia: Apagar luzes de cômodos vazios', pts:15, icon:'💡', impacto:'Baixo'},
+    {nome:'Energia: Tirar eletrodomésticos da tomada após o uso', pts:15, icon:'🔌', impacto:'Baixo'},
+    {nome:'Energia: Escolher a escada em vez do elevador', pts:20, icon:'🏃', impacto:'Baixo'},
+
+    // ♻️ RECICLA (Conquista: Eco-Mestre)
+    {nome:'Reciclagem: Separar resíduos sólidos', pts:25, icon:'♻️', impacto:'Baixo'},
+    {nome:'Reciclagem: Encaminhar materiais recicláveis para coleta seletiva ou pontos de entrega voluntária', pts:50, icon:'♻️', impacto:'Alto'},
+    {nome:'Reciclagem: Juntar pilhas ou baterias para descarte', pts:40, icon:'🔋', impacto:'Médio'},
+
+    // 🌱 PLANTA (Conquista: Mão de Terra)
+    {nome:'Planta: Criar hortas ou jardins domésticos', pts:100, icon:'🌳', impacto:'Alto'},
+    {nome:'Planta: Plantar uma Muda ou Semente', pts:40, icon:'🌿', impacto:'Médio'},
+{nome:'Planta: Criar uma composteira', pts:100, icon:'🌳', impacto:'Alto'},
+
+    // 📢 SOCIAL (Conquista: Voz do Eco)
+    {nome:'Social: Convidar um colega para usar o app EcoAção', pts:40, icon:'🤝', impacto:'Médio'},
+    {nome:'Social: Doar roupas que não usa mais', pts:50, icon:'👕', impacto:'Médio'},
+    {nome:'Social: Doar livros ou apostilas antigas', pts:40, icon:'📚', impacto:'Médio'},
+
+    // 🧹 LIMPEZA (Conquista: Chão Limpo)
+    {nome:'Limpeza: Juntar lixo espalhado pelo chão', pts:40, icon:'🧹', impacto:'Médio'},
+    {nome:'Limpeza: Deixar a mesa do RU/Lanchonete limpa', pts:20, icon:'🍽️', impacto:'Baixo'},
+    {nome:'Limpeza: Ajudar a limpar um canteiro ou praça', pts:70, icon:'✨', impacto:'Alto'},
+
+    // 📄 PAPEL (Conquista: Puro Papel)
+    {nome:'Papel: Usar o verso de folhas como rascunho', pts:20, icon:'📄', impacto:'Baixo'},
+    {nome:'Papel: Estudar por documentos digitais (sem imprimir)', pts:20, icon:'📱', impacto:'Baixo'},
+    {nome:'Papel: Juntar papelão ou jornais para reciclagem', pts:30, icon:'📦', impacto:'Médio'},
+
+    // 🚲 TRANSPORTE (Conquista: Passo Leve)
+    {nome:'Transporte: Vir para a faculdade a pé', pts:40, icon:'🚶', impacto:'Médio'},
+    {nome:'Transporte: Vir para a faculdade de bicicleta', pts:50, icon:'🚲', impacto:'Alto'},
+    {nome:'Transporte: Usar ônibus ou transporte público', pts:30, icon:'🚌', impacto:'Médio'},
+
+    // 🚫 PLÁSTICO (Conquista: Zero Plástico)
+    {nome:'Plástico: Usar sacola de pano (Ecobag) para compras', pts:30, icon:'🛍️', impacto:'Médio'},
+    {nome:'Plástico: Usar seus próprios talheres (reutilizáveis)', pts:30, icon:'🍴', impacto:'Médio'},
+    {nome:'Plástico: Recusar canudinhos e copos descartáveis', pts:15, icon:'🥤', impacto:'Baixo'},
+
+    // 👑 EMBAIXADOR (Título Final)
+    {nome:'Geral: Criar algo novo com material reciclado', pts:60, icon:'🎨', impacto:'Alto'},
+    {nome:'Geral: Participar de uma palestra ambiental', pts:50, icon:'🎓', impacto:'Médio'},
     ];
     onAuthStateChanged(auth, async user => {
         if (!user) { location.href="login.html"; return; }
@@ -81,3 +119,4 @@
 </script>
 </body>
 </html>
+
