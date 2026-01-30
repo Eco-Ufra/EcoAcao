@@ -158,22 +158,38 @@ window.login = async function() {
     const userCredential = await signInWithEmailAndPassword(auth, email, senha);
     const user = userCredential.user;
 
-    // BUSCA OS DADOS DO USUÁRIO NO BANCO PARA CHECAR CARGO
+    // Busca os dados do usuário
     const userSnap = await getDoc(doc(db, "usuarios", user.uid));
     
     if (userSnap.exists()) {
         const dados = userSnap.data();
-        if (dados.isAdmin === true || dados.role === "admin") {
+        
+        // CORREÇÃO AQUI: Mudamos de 'isAdmin' para 'admin'
+        // Checa se o campo 'admin' é verdadeiro (aceita booleano ou texto)
+        if (dados.admin === true || dados.admin === "true") {
             window.location.href = "admin.html";
         } else {
             window.location.href = "dashboard.html";
         }
     } else {
+        // Se não achar o documento, manda para o dashboard por padrão
         window.location.href = "dashboard.html";
     }
 
   } catch (error) {
     console.error("Erro no Login:", error.code);
+    // ... seu switch de erros (invalid-credential, etc) continua aqui igual ...
+    switch (error.code) {
+      case 'auth/invalid-credential':
+      case 'auth/user-not-found':
+      case 'auth/wrong-password':
+        alert("E-mail ou senha incorretos.");
+        break;
+      default:
+        alert("Erro ao realizar login.");
+    }
+  }
+};
     // TRADUÇÃO DOS ERROS DE LOGIN (Restaurei sua lógica)
     switch (error.code) {
       case 'auth/invalid-credential':
@@ -234,6 +250,7 @@ window.recuperarSenha = function() {
 </script>
 </body>
 </html>
+
 
 
 
