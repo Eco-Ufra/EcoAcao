@@ -142,21 +142,23 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 /* ✅ FUNÇÃO GLOBAL (ESSENCIAL) */
-window.login = async function(){
+window.recuperarSenha = async function(){
   const email = document.getElementById("email").value.trim();
-  const senha = document.getElementById("senha").value.trim();
 
-  if(!email || !senha){
-    alert("Preencha email e senha");
+  if(!email){
+    alert("Por favor, digite seu e-mail institucional primeiro.");
+    document.getElementById("email").focus();
     return;
   }
 
-  try{
-    await signInWithEmailAndPassword(auth, email, senha);
-    window.location.href = "dashboard.html";
-  }catch(error){
-    console.error(error);
-    alert("Email ou senha incorretos");
+  try {
+    auth.useDeviceLanguage(); // Detecta idioma PT-BR
+    await sendPasswordResetEmail(auth, email);
+    alert("Sucesso! Verifique seu e-mail para redefinir a senha.");
+  } catch (error) {
+    // ESTE É O BLOCO QUE SUBSTITUÍMOS PARA PEGAR O ERRO REAL
+    console.error("Erro detalhado:", error);
+    alert("CÓDIGO DO ERRO: " + error.code);
   }
 };
   /* 🔑 FUNÇÃO DE RECUPERAÇÃO DE SENHA */
@@ -189,6 +191,7 @@ window.recuperarSenha = async function(){
 </script>
 </body>
 </html>
+
 
 
 
