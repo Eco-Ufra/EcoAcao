@@ -128,69 +128,57 @@ a:hover { text-decoration: underline; }
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
-/* 🔥 Firebase config */
 const firebaseConfig = {
   apiKey: "AIzaSyAgKsk6jSIQk7AQ35xmVpnSn84pU8ca0g8",
   authDomain: "ecoacao-eda80.firebaseapp.com",
   projectId: "ecoacao-eda80",
 };
 
-/* 🔌 Inicialização */
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-/* ✅ FUNÇÃO GLOBAL (ESSENCIAL) */
-window.recuperarSenha = async function(){
+// Forçar o idioma para Português
+auth.languageCode = 'pt-br';
+
+// Função de Login
+window.login = async function() {
   const email = document.getElementById("email").value.trim();
-
-  if(!email){
-    alert("Por favor, digite seu e-mail institucional primeiro.");
-    document.getElementById("email").focus();
-    return;
-  }
-
+  const senha = document.getElementById("senha").value.trim();
   try {
-    auth.useDeviceLanguage(); // Detecta idioma PT-BR
-    await sendPasswordResetEmail(auth, email);
-    alert("Sucesso! Verifique seu e-mail para redefinir a senha.");
+    await signInWithEmailAndPassword(auth, email, senha);
+    window.location.href = "dashboard.html";
   } catch (error) {
-    // ESTE É O BLOCO QUE SUBSTITUÍMOS PARA PEGAR O ERRO REAL
-    console.error("Erro detalhado:", error);
-    alert("CÓDIGO DO ERRO: " + error.code);
+    alert("Erro no login: " + error.code);
   }
 };
-  /* 🔑 FUNÇÃO DE RECUPERAÇÃO DE SENHA */
-window.recuperarSenha = async function(){
+
+// FUNÇÃO DE RECUPERAR SENHA (MELHORADA)
+window.recuperarSenha = function() {
   const email = document.getElementById("email").value.trim();
 
-  if(!email){
-    alert("Digite seu e-mail institucional primeiro para podermos enviar o link de recuperação.");
-    document.getElementById("email").focus();
+  if (!email) {
+    alert("Por favor, digite seu e-mail no campo antes de clicar em recuperar.");
     return;
   }
 
-  try {
-    // Define o idioma para o mesmo do navegador do usuário
-    auth.useDeviceLanguage();
-    
-    await sendPasswordResetEmail(auth, email);
-    alert("Um link de redefinição de senha foi enviado para o seu e-mail!");
-  } catch (error) {
-    console.error("Erro:", error.code);
-    if (error.code === 'auth/user-not-found') {
-      alert("Usuário não encontrado. Verifique se o e-mail está correto.");
-    } else if (error.code === 'auth/invalid-email') {
-      alert("E-mail inválido.");
-    } else {
-      alert("Erro ao enviar e-mail de recuperação. Tente novamente.");
-    }
-  }
+  console.log("Iniciando recuperação para:", email);
+
+  sendPasswordResetEmail(auth, email)
+    .then(() => {
+      alert("✅ Link enviado! Verifique sua caixa de entrada (e a pasta de spam) de: " + email);
+    })
+    .catch((error) => {
+      console.error("Erro completo:", error);
+      // Se aparecer auth/internal-error, pode ser o Firebase bloqueando temporariamente
+      alert("ERRO DO FIREBASE: " + error.code);
+    });
 };
 </script>
 </body>
 </html>
+
 
 
 
