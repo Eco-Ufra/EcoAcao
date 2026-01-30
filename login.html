@@ -141,10 +141,9 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Forçar o idioma para Português
 auth.languageCode = 'pt-br';
 
-// Função de Login com Redirecionamento Inteligente
+// --- FUNÇÃO DE LOGIN ---
 window.login = async function() {
   const email = document.getElementById("email").value.trim();
   const senha = document.getElementById("senha").value.trim();
@@ -158,33 +157,23 @@ window.login = async function() {
     const userCredential = await signInWithEmailAndPassword(auth, email, senha);
     const user = userCredential.user;
 
-    // 1. Tenta buscar o documento
     const userSnap = await getDoc(doc(db, "usuarios", user.uid));
     
     if (userSnap.exists()) {
         const dados = userSnap.data();
-        
-        // ESTE ALERTA VAI NOS MOSTRAR O QUE HÁ NO BANCO:
-        // Ele vai exibir o que está escrito no campo 'admin'
-        alert("UID logado: " + user.uid + "\nValor do campo admin: " + dados.admin);
-
-        // 2. Teste de múltiplas variações (maiúsculo, minúsculo, texto ou booleano)
-        if (dados.admin === true || dados.admin === "true" || dados.Admin === true || dados.Admin === "true") {
+        // Checa se é admin (campo 'admin' conforme seu banco)
+        if (dados.admin === true || dados.admin === "true") {
             window.location.href = "admin.html";
         } else {
             window.location.href = "dashboard.html";
         }
     } else {
-        alert("Erro: Não existe um documento na coleção 'usuarios' com o seu UID: " + user.uid);
         window.location.href = "dashboard.html";
     }
 
   } catch (error) {
-    console.error(error);
-    alert("Erro no Login: " + error.code);
-  }
-};
-    // TRADUÇÃO DOS ERROS DE LOGIN (Restaurei sua lógica)
+    console.error("Erro no Login:", error.code);
+    // RESTAURAÇÃO DAS SUAS TRADUÇÕES DE LOGIN
     switch (error.code) {
       case 'auth/invalid-credential':
       case 'auth/user-not-found':
@@ -198,7 +187,7 @@ window.login = async function() {
         alert("Esta conta foi desativada. Entre em contato com o suporte.");
         break;
       case 'auth/too-many-requests':
-        alert("Muitas tentativas falhas. Conta bloqueada temporariamente.");
+        alert("Muitas tentativas falhas. Sua conta foi bloqueada temporariamente, tente novamente mais tarde.");
         break;
       default:
         alert("Não conseguimos realizar o login agora. Tente novamente em instantes.");
@@ -206,7 +195,7 @@ window.login = async function() {
   }
 };
 
-// FUNÇÃO DE RECUPERAR SENHA (Restaurei 100% como você queria)
+// --- FUNÇÃO DE RECUPERAR SENHA ---
 window.recuperarSenha = function() {
   const email = document.getElementById("email").value.trim();
 
@@ -222,7 +211,7 @@ window.recuperarSenha = function() {
     })
     .catch((error) => {
       console.error("Erro Firebase:", error.code);
-      // TRADUÇÃO DOS ERROS (Seu código original de volta)
+      // RESTAURAÇÃO DAS SUAS TRADUÇÕES DE RECUPERAÇÃO
       switch (error.code) {
         case 'auth/user-not-found':
           alert("Este e-mail ainda não está cadastrado no EcoAção.");
@@ -244,7 +233,6 @@ window.recuperarSenha = function() {
 </script>
 </body>
 </html>
-
 
 
 
