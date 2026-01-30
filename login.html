@@ -146,11 +146,37 @@ auth.languageCode = 'pt-br';
 window.login = async function() {
   const email = document.getElementById("email").value.trim();
   const senha = document.getElementById("senha").value.trim();
+
+  if (!email || !senha) {
+    alert("Por favor, preencha todos os campos.");
+    return;
+  }
+
   try {
     await signInWithEmailAndPassword(auth, email, senha);
     window.location.href = "dashboard.html";
   } catch (error) {
-    alert("Erro no login: " + error.code);
+    console.error("Erro no Login:", error.code);
+
+    // TRADUÇÃO DOS ERROS DE LOGIN
+    switch (error.code) {
+      case 'auth/invalid-credential':
+      case 'auth/user-not-found':
+      case 'auth/wrong-password':
+        alert("E-mail ou senha incorretos. Verifique seus dados e tente novamente.");
+        break;
+      case 'auth/invalid-email':
+        alert("O formato do e-mail digitado não é válido.");
+        break;
+      case 'auth/user-disabled':
+        alert("Esta conta foi desativada. Entre em contato com o suporte.");
+        break;
+      case 'auth/too-many-requests':
+        alert("Muitas tentativas falhas. Sua conta foi bloqueada temporariamente, tente novamente mais tarde.");
+        break;
+      default:
+        alert("Não conseguimos realizar o login agora. Tente novamente em instantes.");
+    }
   }
 };
 
@@ -159,25 +185,41 @@ window.recuperarSenha = function() {
   const email = document.getElementById("email").value.trim();
 
   if (!email) {
-    alert("Por favor, digite seu e-mail no campo antes de clicar em recuperar.");
+    alert("Ops! Digite seu e-mail primeiro para enviarmos o link.");
+    document.getElementById("email").focus();
     return;
   }
 
-  console.log("Iniciando recuperação para:", email);
-
   sendPasswordResetEmail(auth, email)
     .then(() => {
-      alert("✅ Link enviado! Verifique sua caixa de entrada (e a pasta de spam) de: " + email);
+      alert("Sucesso! enviamos um link para: " + email + ". Verifique sua caixa de entrada e também o lixo eletrônico.");
     })
     .catch((error) => {
-      console.error("Erro completo:", error);
-      // Se aparecer auth/internal-error, pode ser o Firebase bloqueando temporariamente
-      alert("ERRO DO FIREBASE: " + error.code);
+      console.error("Erro Firebase:", error.code);
+
+      // TRADUÇÃO DOS ERROS
+      switch (error.code) {
+        case 'auth/user-not-found':
+          alert("Este e-mail ainda não está cadastrado no EcoAção.");
+          break;
+        case 'auth/invalid-email':
+          alert("O formato do e-mail digitado não é válido.");
+          break;
+        case 'auth/too-many-requests':
+          alert("Muitas tentativas seguidas! Aguarde um momento e tente novamente.");
+          break;
+        case 'auth/network-request-failed':
+          alert("Parece que você está sem internet ou com conexão instável.");
+          break;
+        default:
+          alert("Ocorreu um erro inesperado. Tente novamente em instantes.");
+      }
     });
 };
 </script>
 </body>
 </html>
+
 
 
 
