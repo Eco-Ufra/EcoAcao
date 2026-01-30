@@ -66,17 +66,17 @@
         <button id="btnCertificado" onclick="alert('Certificado em breve!')">📜 EMBAIXADOR DETECTADO: BAIXAR CERTIFICADO</button>
         <div class="section-title">🏆 Minhas Conquistas (3 ações cada)</div>
         <div id="conquistasContainer" class="conquistas-grid">
-            <div id="badge-agua" class="badge"><span class="badge-icon">💧</span><span class="badge-text">Águas</span></div>
-            <div id="badge-energia" class="badge"><span class="badge-icon">⚡</span><span class="badge-text">Energia</span></div>
-            <div id="badge-residuos" class="badge"><span class="badge-icon">♻️</span><span class="badge-text">Reciclagem</span></div>
-            <div id="badge-plantas" class="badge"><span class="badge-icon">🌱</span><span class="badge-text">Plantas</span></div>
-            <div id="badge-social" class="badge"><span class="badge-icon">📢</span><span class="badge-text">Social</span></div>
-            <div id="badge-limpeza" class="badge"><span class="badge-icon">🧹</span><span class="badge-text">Limpeza</span></div>
-            <div id="badge-papel" class="badge"><span class="badge-icon">📄</span><span class="badge-text">Papel</span></div>
-            <div id="badge-transporte" class="badge"><span class="badge-icon">🚲</span><span class="badge-text">Transporte</span></div>
-            <div id="badge-plastico" class="badge"><span class="badge-icon">🚫</span><span class="badge-text">Plástico</span></div>
-            <div id="badge-mestre" class="badge"><span class="badge-icon">👑</span><span class="badge-text">Embaixador</span></div>
-        </div>
+    <div id="badge-agua" class="badge"><span class="badge-icon">💧</span><span class="badge-text">Gota de Ouro</span></div>
+    <div id="badge-energia" class="badge"><span class="badge-icon">⚡</span><span class="badge-text">Faísca Verde</span></div>
+    <div id="badge-residuos" class="badge"><span class="badge-icon">♻️</span><span class="badge-text">Eco-Mestre</span></div>
+    <div id="badge-plantas" class="badge"><span class="badge-icon">🌱</span><span class="badge-text">Mão de Terra</span></div>
+    <div id="badge-social" class="badge"><span class="badge-icon">📢</span><span class="badge-text">Voz do Eco</span></div>
+    <div id="badge-limpeza" class="badge"><span class="badge-icon">🧹</span><span class="badge-text">Chão Limpo</span></div>
+    <div id="badge-papel" class="badge"><span class="badge-icon">📄</span><span class="badge-text">Puro Papel</span></div>
+    <div id="badge-transporte" class="badge"><span class="badge-icon">🚲</span><span class="badge-text">Passo Leve</span></div>
+    <div id="badge-plastico" class="badge"><span class="badge-icon">🚫</span><span class="badge-text">Zero Plástico</span></div>
+    <div id="badge-mestre" class="badge"><span class="badge-icon">👑</span><span class="badge-text">Embaixador</span></div>
+</div>
         <div class="section-title">📋 Meu Histórico</div>
         <div id="containerAcoes" class="grid"></div>
     </main>
@@ -112,7 +112,7 @@
                     const t = a.acao.toLowerCase();
                     if(t.includes("água") || t.includes("agua")) c.agua++;
                     if(t.includes("energia") || t.includes("luz")) c.energia++;
-                    if(t.includes("recicla") || t.includes("lixo")) c.residuos++;
+                    if(t.includes("reciclagem") || t.includes("lixo")) c.residuos++;
                     if(t.includes("planta") || t.includes("árvore")) c.plantas++;
                     if(t.includes("social") || t.includes("falei")) c.social++;
                     if(t.includes("limp")) c.limpeza++;
@@ -155,3 +155,4 @@
 </body>
                                                                                      </html>
                                                                                      
+
