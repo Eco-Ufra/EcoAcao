@@ -113,6 +113,10 @@ a:hover { text-decoration: underline; }
 
   <input type="email" id="email" placeholder="Seu email institucional" required>
   <input type="password" id="senha" placeholder="Sua senha" required>
+  
+  <div class="forgot-password">
+    <a href="#" onclick="recuperarSenha()">Esqueceu a senha?</a>
+  </div>
 
   <button onclick="login()">Entrar</button>
 
@@ -155,9 +159,37 @@ window.login = async function(){
     alert("Email ou senha incorretos");
   }
 };
+  /* 🔑 FUNÇÃO DE RECUPERAÇÃO DE SENHA */
+window.recuperarSenha = async function(){
+  const email = document.getElementById("email").value.trim();
+
+  if(!email){
+    alert("Digite seu e-mail institucional primeiro para podermos enviar o link de recuperação.");
+    document.getElementById("email").focus();
+    return;
+  }
+
+  try {
+    // Define o idioma para o mesmo do navegador do usuário
+    auth.useDeviceLanguage();
+    
+    await sendPasswordResetEmail(auth, email);
+    alert("Um link de redefinição de senha foi enviado para o seu e-mail!");
+  } catch (error) {
+    console.error("Erro:", error.code);
+    if (error.code === 'auth/user-not-found') {
+      alert("Usuário não encontrado. Verifique se o e-mail está correto.");
+    } else if (error.code === 'auth/invalid-email') {
+      alert("E-mail inválido.");
+    } else {
+      alert("Erro ao enviar e-mail de recuperação. Tente novamente.");
+    }
+  }
+};
 </script>
 </body>
 </html>
+
 
 
 
