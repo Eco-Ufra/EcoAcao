@@ -7,33 +7,153 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --p: #2e7d32; --s: #43a047; --bg: #f0f4f2; --white: #ffffff; }
+        * { box-sizing: border-box; }
         body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); visibility: hidden; color: #333; }
-        
         .header { background: var(--white); padding: 15px 8%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
-        .logo { font-weight: 700; color: var(--p); display: flex; align-items: center; gap: 8px; }
+        .logo { font-weight: 700; color: var(--p); display: flex; align-items: center; gap: 8px; font-size: 1.4rem; }
         .nav-btns { display: flex; gap: 12px; }
-        .nav-btns button { border: none; padding: 10px 18px; border-radius: 12px; cursor: pointer; font-weight: 600; font-family: 'Poppins'; }
-        
+        .nav-btns button { border: none; padding: 10px 18px; border-radius: 12px; cursor: pointer; font-weight: 600; font-family: 'Poppins'; font-size: 0.85rem; transition: 0.2s; }
         .btn-nova { background: var(--p); color: white; }
         .btn-sair { background: #feebee; color: #c62828; }
-
         .main { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
-
-        /* NÍVEL E PERFIL */
         .profile-box { background: var(--white); border-radius: 28px; display: flex; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08); margin-bottom: 40px; }
         .user-info { padding: 40px; flex: 1; background: linear-gradient(135deg, #1b5e20, #43a047); color: white; }
         .progress-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.2); border-radius: 10px; margin-top: 10px; overflow: hidden; }
         .progress-fill { height: 100%; background: #fff; width: 0%; transition: 1s; }
         .user-score { padding: 40px; width: 220px; text-align: center; background: white; display: flex; flex-direction: column; justify-content: center; }
-        .score-num { font-size: 3rem; font-weight: 800; color: var(--p); }
-
-        /* CONQUISTAS GRID */
-        .conquistas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-bottom: 40px; }
-        .badge { background: white; padding: 15px; border-radius: 18px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 2px solid #eee; transition: 0.3s; opacity: 0.4; grayscale: 1; }
-        .badge.conquistada { opacity: 1; border-color: #ffd700; background: #fffdf0; grayscale: 0; transform: scale(1.05); }
+        .score-num { font-size: 3rem; font-weight: 800; color: var(--p); line-height: 1; }
+        .conquistas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; margin-bottom: 40px; }
+        .badge { background: white; padding: 15px; border-radius: 18px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 2px solid #eee; opacity: 0.3; filter: grayscale(1); transition: 0.5s; }
+        .badge.conquistada { opacity: 1; filter: grayscale(0); border-color: #ffd700; background: #fffdf0; transform: scale(1.05); }
         .badge-icon { font-size: 2rem; display: block; margin-bottom: 5px; }
-        .badge-text { font-size: 0.75rem; font-weight: 600; }
-
+        .badge-text { font-size: 0.7rem; font-weight: 700; color: #555; }
+        #btnCertificado { display: none; width: 100%; padding: 20px; background: #ffd700; color: #1b5e20; border: none; border-radius: 15px; font-weight: 800; margin-bottom: 30px; cursor: pointer; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3); font-family: 'Poppins'; }
+        .section-title { font-size: 1.2rem; font-weight: 600; margin: 30px 0 15px; display: flex; align-items: center; gap: 8px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .card-acao { background: white; padding: 20px; border-radius: 20px; border: 1px solid #eee; }
+        .status-tag { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; padding: 4px 10px; border-radius: 10px; display: inline-block; margin-bottom: 8px; }
+        .aprovada { background: #e8f5e9; color: #2e7d32; }
+        .pendente { background: #fffde7; color: #fbc02d; }
+        .rejeitada { background: #feebee; color: #c62828; }
+        .img-acao { width: 100%; height: 150px; object-fit: cover; border-radius: 12px; margin-top: 10px; }
+        @media (max-width: 600px) { .profile-box { flex-direction: column; } .user-score { width: 100%; border-top: 1px solid #eee; } }
+    </style>
+</head>
+<body id="dashboardBody">
+    <header class="header">
+        <div class="logo">🌱 EcoAção</div>
+        <div class="nav-btns">
+            <button class="btn-nova" onclick="location.href='acoes.html'">+ Nova Ação</button>
+            <button class="btn-sair" onclick="fazerLogout()">Sair</button>
+        </div>
+    </header>
+    <main class="main">
+        <div class="profile-box">
+            <div class="user-info">
+                <h2 id="exibirNome">Carregando...</h2>
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:600;">
+                    <span id="txtNivel">Nível 1</span>
+                    <span id="txtProximoNivel">XP</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" id="barraProgresso"></div></div>
+                <p id="exibirCurso" style="margin-top:10px; font-size:0.85rem; opacity:0.8;">---</p>
+            </div>
+            <div class="user-score">
+                <div class="score-num" id="exibirPontos">0</div>
+                <div style="font-size:0.65rem; color:#999; font-weight:700; letter-spacing:1px;">PONTOS</div>
+            </div>
+        </div>
+        <button id="btnCertificado" onclick="alert('Certificado em breve!')">📜 EMBAIXADOR DETECTADO: BAIXAR CERTIFICADO</button>
+        <div class="section-title">🏆 Minhas Conquistas (3 ações cada)</div>
+        <div id="conquistasContainer" class="conquistas-grid">
+            <div id="badge-agua" class="badge"><span class="badge-icon">💧</span><span class="badge-text">Águas</span></div>
+            <div id="badge-energia" class="badge"><span class="badge-icon">⚡</span><span class="badge-text">Energia</span></div>
+            <div id="badge-residuos" class="badge"><span class="badge-icon">♻️</span><span class="badge-text">Reciclagem</span></div>
+            <div id="badge-plantas" class="badge"><span class="badge-icon">🌱</span><span class="badge-text">Plantas</span></div>
+            <div id="badge-social" class="badge"><span class="badge-icon">📢</span><span class="badge-text">Social</span></div>
+            <div id="badge-limpeza" class="badge"><span class="badge-icon">🧹</span><span class="badge-text">Limpeza</span></div>
+            <div id="badge-papel" class="badge"><span class="badge-icon">📄</span><span class="badge-text">Papel</span></div>
+            <div id="badge-transporte" class="badge"><span class="badge-icon">🚲</span><span class="badge-text">Transporte</span></div>
+            <div id="badge-plastico" class="badge"><span class="badge-icon">🚫</span><span class="badge-text">Plástico</span></div>
+            <div id="badge-mestre" class="badge"><span class="badge-icon">👑</span><span class="badge-text">Embaixador</span></div>
+        </div>
+        <div class="section-title">📋 Meu Histórico</div>
+        <div id="containerAcoes" class="grid"></div>
+    </main>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+    import { getFirestore, doc, onSnapshot, collection, query, where } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+    const firebaseConfig = { apiKey: "AIzaSyAgKsk6jSIQk7AQ35xmVpnSn84pU8ca0g8", authDomain: "ecoacao-eda80.firebaseapp.com", projectId: "ecoacao-eda80" };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    onAuthStateChanged(auth, user => {
+        if (!user) { window.location.href = "login.html"; return; }
+        onSnapshot(doc(db, "usuarios", user.uid), snap => {
+            if (snap.exists()) {
+                const d = snap.data();
+                document.getElementById("dashboardBody").style.visibility = "visible";
+                document.getElementById("exibirNome").innerText = d.nome;
+                document.getElementById("exibirPontos").innerText = d.pontos || 0;
+                document.getElementById("exibirCurso").innerText = "Curso: " + (d.curso || "Geral");
+                atualizarNivel(d.pontos || 0);
+            }
+        });
+        const q = query(collection(db, "acoes_pendentes"), where("uid", "==", user.uid));
+        onSnapshot(q, snap => {
+            let c = { agua:0, energia:0, residuos:0, plantas:0, social:0, limpeza:0, papel:0, transporte:0, plastico:0, totalAprov:0 };
+            const container = document.getElementById("containerAcoes");
+            container.innerHTML = "";
+            snap.forEach(docAcao => {
+                const a = docAcao.data();
+                if(a.status === 'aprovada') {
+                    c.totalAprov++;
+                    const t = a.acao.toLowerCase();
+                    if(t.includes("água") || t.includes("agua")) c.agua++;
+                    if(t.includes("energia") || t.includes("luz")) c.energia++;
+                    if(t.includes("recicla") || t.includes("lixo")) c.residuos++;
+                    if(t.includes("planta") || t.includes("árvore")) c.plantas++;
+                    if(t.includes("social") || t.includes("falei")) c.social++;
+                    if(t.includes("limp")) c.limpeza++;
+                    if(t.includes("papel")) c.papel++;
+                    if(t.includes("transporte") || t.includes("bike") || t.includes("pé")) c.transporte++;
+                    if(t.includes("plástico") || t.includes("copo")) c.plastico++;
+                }
+                const div = document.createElement("div");
+                div.className = "card-acao";
+                div.innerHTML = `<span class="status-tag ${a.status}">${a.status}</span><br><b>${a.acao}</b><br><small>${a.pontos} pts</small>${a.comprovanteBase64 ? `<img src="${a.comprovanteBase64}" class="img-acao">` : ''}`;
+                container.appendChild(div);
+            });
+            vConquistas(c);
+        });
+    });
+    function vConquistas(c) {
+        if(c.agua >= 3) document.getElementById("badge-agua").classList.add("conquistada");
+        if(c.energia >= 3) document.getElementById("badge-energia").classList.add("conquistada");
+        if(c.residuos >= 3) document.getElementById("badge-residuos").classList.add("conquistada");
+        if(c.plantas >= 3) document.getElementById("badge-plantas").classList.add("conquistada");
+        if(c.social >= 3) document.getElementById("badge-social").classList.add("conquistada");
+        if(c.limpeza >= 3) document.getElementById("badge-limpeza").classList.add("conquistada");
+        if(c.papel >= 3) document.getElementById("badge-papel").classList.add("conquistada");
+        if(c.transporte >= 3) document.getElementById("badge-transporte").classList.add("conquistada");
+        if(c.plastico >= 3) document.getElementById("badge-plastico").classList.add("conquistada");
+        if(c.totalAprov >= 10) {
+            document.getElementById("badge-mestre").classList.add("conquistada");
+            document.getElementById("btnCertificado").style.display = "block";
+        }
+    }
+    function atualizarNivel(pts) {
+        let n = Math.floor(pts/100) + 1;
+        let p = pts % 100;
+        document.getElementById("barraProgresso").style.width = p + "%";
+        document.getElementById("txtNivel").innerText = "Nível " + n;
+        document.getElementById("txtProximoNivel").innerText = p + "/100 XP";
+    }
+    window.fazerLogout = () => signOut(auth).then(() => location.href="login.html");
+</script>
+</body>
+</html>
         /* BOTÃO CERTIFICADO (FICA OCULTO ATÉ MERECER) */
         #btnCertificado { 
             display: none; width: 100%; padding: 20px; background: #ffd700; color: #000; 
@@ -434,4 +554,5 @@
 </script>
 </body>
 </html>
+
 
