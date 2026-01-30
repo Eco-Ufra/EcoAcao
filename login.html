@@ -129,7 +129,6 @@ a:hover { text-decoration: underline; }
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-// IMPORTANTE: Adicionado Firestore para checar se é admin
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -140,8 +139,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app); // Inicializa o banco de dados
+const db = getFirestore(app);
 
+// Forçar o idioma para Português
 auth.languageCode = 'pt-br';
 
 // Função de Login com Redirecionamento Inteligente
@@ -158,55 +158,83 @@ window.login = async function() {
     const userCredential = await signInWithEmailAndPassword(auth, email, senha);
     const user = userCredential.user;
 
-    // BUSCA OS DADOS DO USUÁRIO NO BANCO
+    // BUSCA OS DADOS DO USUÁRIO NO BANCO PARA CHECAR CARGO
     const userSnap = await getDoc(doc(db, "usuarios", user.uid));
     
     if (userSnap.exists()) {
         const dados = userSnap.data();
-        
-        // SE FOR ADMIN, VAI PARA admin.html, SENÃO VAI PARA dashboard.html
         if (dados.isAdmin === true || dados.role === "admin") {
             window.location.href = "admin.html";
         } else {
             window.location.href = "dashboard.html";
         }
     } else {
-        // Caso o usuário não tenha documento na coleção 'usuarios'
         window.location.href = "dashboard.html";
     }
 
   } catch (error) {
     console.error("Erro no Login:", error.code);
+    // TRADUÇÃO DOS ERROS DE LOGIN (Restaurei sua lógica)
     switch (error.code) {
       case 'auth/invalid-credential':
       case 'auth/user-not-found':
       case 'auth/wrong-password':
-        alert("E-mail ou senha incorretos.");
+        alert("E-mail ou senha incorretos. Verifique seus dados e tente novamente.");
+        break;
+      case 'auth/invalid-email':
+        alert("O formato do e-mail digitado não é válido.");
+        break;
+      case 'auth/user-disabled':
+        alert("Esta conta foi desativada. Entre em contato com o suporte.");
         break;
       case 'auth/too-many-requests':
         alert("Muitas tentativas falhas. Conta bloqueada temporariamente.");
         break;
       default:
-        alert("Erro ao realizar login. Tente novamente.");
+        alert("Não conseguimos realizar o login agora. Tente novamente em instantes.");
     }
   }
 };
 
-// Função de recuperar senha mantida igual
+// FUNÇÃO DE RECUPERAR SENHA (Restaurei 100% como você queria)
 window.recuperarSenha = function() {
   const email = document.getElementById("email").value.trim();
+
   if (!email) {
-    alert("Ops! Digite seu e-mail primeiro.");
+    alert("Ops! Digite seu e-mail primeiro para enviarmos o link.");
     document.getElementById("email").focus();
     return;
   }
+
   sendPasswordResetEmail(auth, email)
-    .then(() => alert("Sucesso! Link enviado para: " + email))
-    .catch((error) => alert("Erro: " + error.code));
+    .then(() => {
+      alert("Sucesso! enviamos um link para: " + email + ". Verifique sua caixa de entrada e também o lixo eletrônico.");
+    })
+    .catch((error) => {
+      console.error("Erro Firebase:", error.code);
+      // TRADUÇÃO DOS ERROS (Seu código original de volta)
+      switch (error.code) {
+        case 'auth/user-not-found':
+          alert("Este e-mail ainda não está cadastrado no EcoAção.");
+          break;
+        case 'auth/invalid-email':
+          alert("O formato do e-mail digitado não é válido.");
+          break;
+        case 'auth/too-many-requests':
+          alert("Muitas tentativas seguidas! Aguarde um momento e tente novamente.");
+          break;
+        case 'auth/network-request-failed':
+          alert("Parece que você está sem internet ou com conexão instável.");
+          break;
+        default:
+          alert("Ocorreu um erro inesperado. Tente novamente em instantes.");
+      }
+    });
 };
 </script>
 </body>
 </html>
+
 
 
 
