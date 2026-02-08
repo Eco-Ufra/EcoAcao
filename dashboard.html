@@ -128,6 +128,40 @@
             vConquistas(c);
         });
     });
+
+    // Lógica de Enviar Feedback
+        document.getElementById("btnEnviarFeedback").addEventListener("click", async () => {
+            const texto = document.getElementById("txtFeedback").value;
+            const btn = document.getElementById("btnEnviarFeedback");
+
+            if (texto.trim() === "") {
+                alert("Por favor, escreva algo antes de enviar.");
+                return;
+            }
+
+            try {
+                btn.disabled = true;
+                btn.innerText = "Enviando...";
+                
+                await addDoc(collection(db, "feedbacks"), {
+                    uid: user.uid,
+                    nome: document.getElementById("exibirNome").innerText,
+                    mensagem: texto,
+                    data: new Date().toLocaleString(),
+                    timestamp: new Date()
+                });
+
+                alert("Feedback enviado com sucesso! Obrigado.");
+                document.getElementById("txtFeedback").value = "";
+            } catch (error) {
+                console.error("Erro ao enviar feedback:", error);
+                alert("Erro ao enviar. Verifique sua conexão.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Enviar Comentário";
+            }
+        });
+    });
     function vConquistas(c) {
         if(c.agua >= 3) document.getElementById("badge-agua").classList.add("conquistada");
         if(c.energia >= 3) document.getElementById("badge-energia").classList.add("conquistada");
@@ -155,4 +189,5 @@
 </body>
                                                                                      </html>
                                                                                      
+
 
