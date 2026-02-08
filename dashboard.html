@@ -30,7 +30,7 @@
         #btnCertificado { display: none; width: 100%; padding: 20px; background: #ffd700; color: #1b5e20; border: none; border-radius: 15px; font-weight: 800; margin-bottom: 30px; cursor: pointer; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3); font-family: 'Poppins'; }
         .section-title { font-size: 1.2rem; font-weight: 600; margin: 30px 0 15px; display: flex; align-items: center; gap: 8px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .card-acao { background: white; padding: 20px; border-radius: 20px; border: 1px solid #eee; }
+        .card-acao { background: white; padding: 20px; border-radius: 20px; border: 1px solid #eee; margin-bottom: 15px; }
         .status-tag { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; padding: 4px 10px; border-radius: 10px; display: inline-block; margin-bottom: 8px; }
         .aprovada { background: #e8f5e9; color: #2e7d32; }
         .pendente { background: #fffde7; color: #fbc02d; }
@@ -63,33 +63,46 @@
                 <div style="font-size:0.65rem; color:#999; font-weight:700; letter-spacing:1px;">PONTOS</div>
             </div>
         </div>
+
         <button id="btnCertificado" onclick="alert('Certificado em breve!')">📜 EMBAIXADOR DETECTADO: BAIXAR CERTIFICADO</button>
+
         <div class="section-title">🏆 Minhas Conquistas (3 ações cada)</div>
         <div id="conquistasContainer" class="conquistas-grid">
-    <div id="badge-agua" class="badge"><span class="badge-icon">💧</span><span class="badge-text">Gota de Ouro</span></div>
-    <div id="badge-energia" class="badge"><span class="badge-icon">⚡</span><span class="badge-text">Faísca Verde</span></div>
-    <div id="badge-residuos" class="badge"><span class="badge-icon">♻️</span><span class="badge-text">Eco-Mestre</span></div>
-    <div id="badge-plantas" class="badge"><span class="badge-icon">🌱</span><span class="badge-text">Mão de Terra</span></div>
-    <div id="badge-social" class="badge"><span class="badge-icon">📢</span><span class="badge-text">Voz do Eco</span></div>
-    <div id="badge-limpeza" class="badge"><span class="badge-icon">🧹</span><span class="badge-text">Chão Limpo</span></div>
-    <div id="badge-papel" class="badge"><span class="badge-icon">📄</span><span class="badge-text">Puro Papel</span></div>
-    <div id="badge-transporte" class="badge"><span class="badge-icon">🚲</span><span class="badge-text">Passo Leve</span></div>
-    <div id="badge-plastico" class="badge"><span class="badge-icon">🚫</span><span class="badge-text">Zero Plástico</span></div>
-    <div id="badge-mestre" class="badge"><span class="badge-icon">👑</span><span class="badge-text">Embaixador</span></div>
-</div>
+            <div id="badge-agua" class="badge"><span class="badge-icon">💧</span><span class="badge-text">Gota de Ouro</span></div>
+            <div id="badge-energia" class="badge"><span class="badge-icon">⚡</span><span class="badge-text">Faísca Verde</span></div>
+            <div id="badge-residuos" class="badge"><span class="badge-icon">♻️</span><span class="badge-text">Eco-Mestre</span></div>
+            <div id="badge-plantas" class="badge"><span class="badge-icon">🌱</span><span class="badge-text">Mão de Terra</span></div>
+            <div id="badge-social" class="badge"><span class="badge-icon">📢</span><span class="badge-text">Voz do Eco</span></div>
+            <div id="badge-limpeza" class="badge"><span class="badge-icon">🧹</span><span class="badge-text">Chão Limpo</span></div>
+            <div id="badge-papel" class="badge"><span class="badge-icon">📄</span><span class="badge-text">Puro Papel</span></div>
+            <div id="badge-transporte" class="badge"><span class="badge-icon">🚲</span><span class="badge-text">Passo Leve</span></div>
+            <div id="badge-plastico" class="badge"><span class="badge-icon">🚫</span><span class="badge-text">Zero Plástico</span></div>
+            <div id="badge-mestre" class="badge"><span class="badge-icon">👑</span><span class="badge-text">Embaixador</span></div>
+        </div>
+
         <div class="section-title">📋 Meu Histórico</div>
-        <div id="containerAcoes" class="grid"></div>
+        <div id="containerAcoes" class="grid" style="margin-bottom: 30px;"></div>
+
+        <div class="section-title">💬 Enviar Feedback</div>
+        <div class="card-acao">
+            <textarea id="txtFeedback" placeholder="Sugestões ou elogios..." style="width: 100%; height: 100px; padding: 10px; border-radius: 10px; border: 1px solid #ddd; font-family: 'Poppins';"></textarea>
+            <button id="btnEnviarFeedback" style="width: 100%; margin-top: 10px; background: var(--p); color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: 600;">Enviar Comentário</button>
+        </div>
     </main>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-    import { getFirestore, doc, onSnapshot, collection, query, where } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot, collection, query, where, addDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
     const firebaseConfig = { apiKey: "AIzaSyAgKsk6jSIQk7AQ35xmVpnSn84pU8ca0g8", authDomain: "ecoacao-eda80.firebaseapp.com", projectId: "ecoacao-eda80" };
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+
     onAuthStateChanged(auth, user => {
         if (!user) { window.location.href = "login.html"; return; }
+
         onSnapshot(doc(db, "usuarios", user.uid), snap => {
             if (snap.exists()) {
                 const d = snap.data();
@@ -100,6 +113,7 @@
                 atualizarNivel(d.pontos || 0);
             }
         });
+
         const q = query(collection(db, "acoes_pendentes"), where("uid", "==", user.uid));
         onSnapshot(q, snap => {
             let c = { agua:0, energia:0, residuos:0, plantas:0, social:0, limpeza:0, papel:0, transporte:0, plastico:0, totalAprov:0 };
@@ -127,9 +141,8 @@
             });
             vConquistas(c);
         });
-    });
 
-    // Lógica de Enviar Feedback
+        // Lógica de Enviar Feedback (CORRIGIDA E DENTRO DO AUTH)
         document.getElementById("btnEnviarFeedback").addEventListener("click", async () => {
             const texto = document.getElementById("txtFeedback").value;
             const btn = document.getElementById("btnEnviarFeedback");
@@ -155,13 +168,14 @@
                 document.getElementById("txtFeedback").value = "";
             } catch (error) {
                 console.error("Erro ao enviar feedback:", error);
-                alert("Erro ao enviar. Verifique sua conexão.");
+                alert("Erro ao enviar. Verifique suas regras do Firebase.");
             } finally {
                 btn.disabled = false;
                 btn.innerText = "Enviar Comentário";
             }
         });
     });
+
     function vConquistas(c) {
         if(c.agua >= 3) document.getElementById("badge-agua").classList.add("conquistada");
         if(c.energia >= 3) document.getElementById("badge-energia").classList.add("conquistada");
@@ -177,6 +191,7 @@
             document.getElementById("btnCertificado").style.display = "block";
         }
     }
+
     function atualizarNivel(pts) {
         let n = Math.floor(pts/100) + 1;
         let p = pts % 100;
@@ -184,10 +199,8 @@
         document.getElementById("txtNivel").innerText = "Nível " + n;
         document.getElementById("txtProximoNivel").innerText = p + "/100 XP";
     }
+
     window.fazerLogout = () => signOut(auth).then(() => location.href="login.html");
 </script>
 </body>
-                                                                                     </html>
-                                                                                     
-
-
+</html>
